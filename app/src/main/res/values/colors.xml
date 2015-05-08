@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="red">#e11c3b</color>
+    <color name="red_statut_bar">#b4162f</color>
+    <color name="blue">#356fbb</color>
+    <color name="light_blue">#aec5e3</color>
+    <color name="grey">#efefef</color>
+    <color name="dark_grey">#cecece</color>
+    <color name="darker_grey">#2e303d</color>
+</resources>

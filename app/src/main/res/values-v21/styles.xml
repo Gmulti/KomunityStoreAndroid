@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorPrimaryDark">@color/red_statut_bar</item>
+        <item name="colorAccent">@color/red</item>
+        <item name="android:statusBarColor">@color/red_statut_bar</item>
+    </style>
+</resources>

@@ -1,0 +1,26 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.komunitystore.view.KSActionBar
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ks_action_bar_size"
+        android:layout_alignParentTop="true"/>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_below="@+id/action_bar"
+        android:layout_above="@+id/tabbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.komunitystore.view.KSTabbar
+        android:id="@+id/tabbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ks_tabbar_size"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

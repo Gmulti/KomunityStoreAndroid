@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/ks_tabbar_size"
+    android:background="@color/grey"
+    android:weightSum="3">
+
+    <LinearLayout
+        android:id="@+id/left_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="@dimen/ks_tabbar_button_padding"
+        android:weightSum="2">
+
+        <ImageView
+            android:id="@+id/left_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:id="@+id/left_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:textColor="@color/grey"
+            android:gravity="center_horizontal|bottom"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/middle_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="@dimen/ks_tabbar_button_padding"
+        android:weightSum="2">
+
+        <ImageView
+            android:id="@+id/middle_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:id="@+id/middle_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:textColor="@color/grey"
+            android:gravity="center_horizontal|bottom"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/right_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="@dimen/ks_tabbar_button_padding"
+        android:weightSum="2">
+
+        <ImageView
+            android:id="@+id/right_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:id="@+id/right_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:textColor="@color/grey"
+            android:gravity="center_horizontal|bottom"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+</LinearLayout>
