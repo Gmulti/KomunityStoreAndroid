@@ -1,13 +1,14 @@
 package com.komunitystore.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.komunitystore.R;
 import com.komunitystore.fragment.KSFragment;
-import com.komunitystore.fragment.main.HomeFragment;
+import com.komunitystore.fragment.main.ListDealFragment;
 import com.komunitystore.fragment.main.MainFragment;
 import com.komunitystore.utils.KSEvent;
 import com.komunitystore.view.KSActionBar;
@@ -21,6 +22,8 @@ public class MainActivity extends FragmentActivity {
 
     private KSActionBar _actionBar;
     private KSTabbar _tabbar;
+
+    private boolean _backToQuit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,18 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (_backToQuit) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(this, "Appuyer une nouvelle fois pour quitter", Toast.LENGTH_SHORT).show();
+            _backToQuit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    _backToQuit = false;
+                }
+            }, 2000);
+        }
     }
 
     @Override
@@ -84,7 +98,7 @@ public class MainActivity extends FragmentActivity {
         switch (event.getType()) {
             case LOGIN:
                 if (event.getError() == KSEvent.Error.NO_ERROR) {
-                    showFragment(new HomeFragment());
+                    showFragment(new ListDealFragment());
                 }
                 break;
         }

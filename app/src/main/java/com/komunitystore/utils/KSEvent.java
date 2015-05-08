@@ -7,18 +7,20 @@ public class KSEvent {
 
     private Type _type;
     private Error _error;
+    private Object _object;
 
     public enum Type {
-        LOGIN
+        LOGIN, REGISTER
     }
 
     public enum Error {
-        NO_ERROR
+        NO_ERROR, ERROR
     }
 
-    public KSEvent(Type type, Error error) {
+    public KSEvent(Type type, Error error, Object object) {
         _type = type;
         _error = error;
+        _object = object;
     }
 
     public Type getType() {
@@ -27,5 +29,9 @@ public class KSEvent {
 
     public Error getError() {
         return _error;
+    }
+
+    public Object getObject() {
+        return _object;
     }
 }

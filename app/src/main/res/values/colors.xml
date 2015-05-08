@@ -6,5 +6,6 @@
     <color name="light_blue">#aec5e3</color>
     <color name="grey">#efefef</color>
     <color name="dark_grey">#cecece</color>
+    <color name="date_grey">#a4a4a4</color>
     <color name="darker_grey">#2e303d</color>
 </resources>

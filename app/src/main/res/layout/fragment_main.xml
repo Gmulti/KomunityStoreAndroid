@@ -2,16 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical"
-    android:weightSum="6"
-    android:background="@android:color/white">
+    android:weightSum="12">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:src="@drawable/icon_login"
-        android:scaleType="centerInside"/>
+        android:layout_weight="4"
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_login" />
 
     <TextView
         android:layout_width="match_parent"
@@ -19,14 +19,85 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="Komunity Store"
-        android:textStyle="bold"
         android:textColor="@color/red"
-        android:textSize="30dp"/>
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/to_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="left"
+            android:layout_marginLeft="30dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:tint="@color/red"
+                android:tintMode="src_in"
+                android:src="@drawable/left" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:paddingLeft="5dp"
+                android:text="Login"
+                android:textColor="@color/red"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/to_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="left"
+            android:layout_marginRight="30dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:paddingRight="5dp"
+                android:text="Register"
+                android:textColor="@color/red"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:tint="@color/red"
+                android:tintMode="src_in"
+                android:src="@drawable/right" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
+        android:overScrollMode="never"
         android:layout_height="0dp"
-        android:layout_weight="3" />
+        android:layout_weight="6" />
 
 </LinearLayout>
