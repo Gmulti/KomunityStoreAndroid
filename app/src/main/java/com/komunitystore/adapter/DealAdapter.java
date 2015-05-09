@@ -15,6 +15,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.komunitystore.R;
 import com.komunitystore.activity.SecondaryActivity;
 import com.komunitystore.fragment.secondary.DealDetailsFragment;
+import com.komunitystore.fragment.secondary.UserFragment;
 import com.komunitystore.model.Deal;
 import com.komunitystore.utils.NetworkManager;
 
@@ -69,7 +70,7 @@ public class DealAdapter extends ArrayAdapter<Deal> {
         goToProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Clicked on profile " + deal.getUser().getUsername(), Toast.LENGTH_SHORT).show();
+                launchActivity(UserFragment.class, deal.getUser());
             }
         });
         goToDeal.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +107,8 @@ public class DealAdapter extends ArrayAdapter<Deal> {
         intent.putExtra(SecondaryActivity.EXTRA_FRAGMENT, clazz.getName());
         if (clazz == DealDetailsFragment.class) {
             intent.putExtra(SecondaryActivity.EXTRA_DEAL, object);
+        } else if (clazz == UserFragment.class) {
+            intent.putExtra(SecondaryActivity.EXTRA_USER, object);
         }
         FragmentActivity activity = (FragmentActivity) getContext();
         activity.startActivity(intent);

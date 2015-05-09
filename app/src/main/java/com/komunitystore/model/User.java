@@ -40,6 +40,15 @@ public class User extends BaseResponse implements Serializable {
     @SerializedName("deals")
     private List<Deal> deals;
 
+    @SerializedName("nb_deals")
+    private int nb_deals;
+
+    @SerializedName("nb_subscribes")
+    private int nb_subscribes;
+
+    @SerializedName("nb_followers")
+    private int nb_followers;
+
     public int getId() {
         return id;
     }
@@ -111,5 +120,17 @@ public class User extends BaseResponse implements Serializable {
 
     public void setDeals(List<Deal> deals) {
         this.deals = deals;
+    }
+
+    public int getNb_deals() {
+        return nb_deals;
+    }
+
+    public int getNb_subscribes() {
+        return nb_subscribes;
+    }
+
+    public int getNb_followers() {
+        return nb_followers;
     }
 }

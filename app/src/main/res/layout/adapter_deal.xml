@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/grey"
+    android:clickable="false"
     android:orientation="vertical"
+    android:paddingBottom="5dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
-    android:clickable="false">
+    android:paddingTop="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,8 +20,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_deal"
             android:layout_marginBottom="5dp"
+            android:background="@drawable/background_deal"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -35,8 +35,9 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_margin="5dp"
-                    android:scaleType="centerInside"
-                    android:background="@drawable/background_image"  />
+                    android:background="@drawable/background_image"
+                    android:padding="2dp"
+                    android:scaleType="centerInside" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -52,9 +53,9 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:textStyle="bold"
                         android:text="Username"
-                        android:textColor="@color/blue" />
+                        android:textColor="@color/blue"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/date"
@@ -94,8 +95,9 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_margin="5dp"
-                    android:scaleType="centerInside"
-                    android:background="@drawable/background_image" />
+                    android:background="@drawable/background_image"
+                    android:padding="2dp"
+                    android:scaleType="centerInside" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -112,11 +114,11 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:ellipsize="marquee"
-                        android:maxLines="2"
                         android:gravity="center|left"
+                        android:maxLines="2"
                         android:text="Titre du deal"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/message"
@@ -124,8 +126,8 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:ellipsize="marquee"
-                        android:singleLine="true"
                         android:gravity="center|left"
+                        android:singleLine="true"
                         android:text="Code promo"
                         android:textColor="@android:color/black" />
 
@@ -136,16 +138,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginTop="10dp"
                     android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/background_price"
                     android:paddingBottom="5dp"
-                    android:paddingTop="5dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:background="@drawable/background_price"
+                    android:paddingTop="5dp"
                     android:scaleType="centerInside"
                     android:text="Price"
-                    android:textColor="@color/red"/>
+                    android:textColor="@color/red" />
 
             </RelativeLayout>
 
