@@ -29,6 +29,7 @@ import com.komunitystore.model.User;
 import com.komunitystore.utils.KSEvent;
 import com.komunitystore.utils.KSSharedPreferences;
 import com.komunitystore.utils.NetworkManager;
+import com.komunitystore.utils.Singleton;
 
 import de.greenrobot.event.EventBus;
 
@@ -70,11 +71,11 @@ public class LoginFragment extends Fragment {
         return root;
     }
 
-    public void onEventMainThread(KSEvent event){
+    public void onEventMainThread(KSEvent event) {
         switch (event.getType()) {
             case REGISTER:
                 if (event.getError() == KSEvent.Error.NO_ERROR) {
-                    _username.setText( ((User) event.getObject()).getUsername());
+                    _username.setText(((User) event.getObject()).getUsername());
                     _password.setText("");
                 }
                 break;
@@ -100,8 +101,44 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onResponse(AccessToken response) {
                         KSSharedPreferences.getInstance(getActivity()).setAccessToken(response);
-                        EventBus.getDefault().post(new KSEvent(KSEvent.Type.LOGIN, KSEvent.Error.NO_ERROR, null));
-                        _progress.dismiss();
+                        NetworkManager.getInstance(getActivity()).getUserInfo(new Response.Listener<User>() {
+                            @Override
+                            public void onResponse(User response) {
+                                _progress.dismiss();
+                                Singleton.getInstance().setCurrentUser(response);
+                                EventBus.getDefault().post(new KSEvent(KSEvent.Type.LOGIN, KSEvent.Error.NO_ERROR, null));
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                                _progress.dismiss();
+                                KSErrorResponse errorResponse = new Gson().fromJson(error.getMessage(), KSErrorResponse.class);
+                                if (errorResponse != null) {
+                                    new AlertDialog.Builder(getActivity())
+                                            .setTitle("Erreur")
+                                            .setMessage(errorResponse.getError_description())
+                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .create().show();
+                                } else {
+                                    new AlertDialog.Builder(getActivity())
+                                            .setTitle("An error has occured")
+                                            .setMessage("Try again later")
+                                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .create().show();
+                                }
+                            }
+                        });
                     }
                 }, new Response.ErrorListener() {
                     @Override

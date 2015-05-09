@@ -67,7 +67,7 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/background_button"
+        android:background="@drawable/background_button_red"
         android:text="Register"
         android:textColor="@android:color/white"
         android:textStyle="bold" />

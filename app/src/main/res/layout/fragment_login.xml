@@ -20,6 +20,7 @@
         android:gravity="center"
         android:padding="10dp"
         android:hint="Username"
+        android:text="test"
         android:textColor="@color/red"
         android:textStyle="bold"
         android:background="@drawable/background_edit_text"/>
@@ -38,6 +39,7 @@
         android:gravity="center"
         android:padding="10dp"
         android:hint="Password"
+        android:text="test"
         android:textColor="@color/red"
         android:textStyle="bold"
         android:background="@drawable/background_edit_text"/>
@@ -53,6 +55,6 @@
         android:text="Login"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:background="@drawable/background_button"/>
+        android:background="@drawable/background_button_red"/>
 
 </LinearLayout>

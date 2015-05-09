@@ -29,5 +29,7 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.+'
     // GSON
     compile 'com.google.code.gson:gson:2.2.4'
+    // Rebound
+    compile 'com.facebook.rebound:rebound:0.3.7'
 
 }

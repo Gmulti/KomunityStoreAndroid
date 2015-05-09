@@ -5,7 +5,10 @@ import android.content.Context;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
+import com.komunitystore.R;
 import com.komunitystore.model.AccessToken;
 import com.komunitystore.model.Deal;
 import com.komunitystore.model.User;
@@ -31,6 +34,7 @@ public class NetworkManager {
     public static final String BASE_URL_PUBLIC = "http://104.236.195.92/api/public";
     public static final String POST_REGISTER = "/users/register.json";
     public static final String BASE_URL_API = "http://104.236.195.92/app_dev.php/api/v1";
+    public static final String GET_ME = "/me.json";
     public static final String GET_DEALS = "/deals.json";
 
     private static NetworkManager _instance;
@@ -38,10 +42,12 @@ public class NetworkManager {
     private Context _context;
 
     private RequestQueue _queue;
+    private ImageLoader _imageLoader;
 
     private NetworkManager(Context context) {
         _context = context;
         _queue = Volley.newRequestQueue(context);
+        _imageLoader = new ImageLoader(_queue, new LruBitmapCache(LruBitmapCache.getCacheSize(_context)));
     }
 
     public static NetworkManager getInstance(Context context) {
@@ -49,6 +55,10 @@ public class NetworkManager {
             _instance = new NetworkManager(context);
         }
         return _instance;
+    }
+
+    public void getUserInfo(Response.Listener listener, Response.ErrorListener errorListener) {
+        _queue.add(new KSRequest(Request.Method.GET, BASE_URL_API + GET_ME, User.class, KSRequest.ReturnType.OBJECT, null, listener, errorListener, KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
     public void login(String username, String password, Response.Listener listener, Response.ErrorListener errorListener) {
@@ -86,5 +96,10 @@ public class NetworkManager {
             }
         }
         _queue.add(new KSRequest(Request.Method.GET, url, Deal.class, KSRequest.ReturnType.ARRAY, null, listener, errorListener, KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void getImage(NetworkImageView image, String url) {
+        image.setErrorImageResId(R.drawable.no_image);
+        image.setImageUrl(url, _imageLoader);
     }
 }

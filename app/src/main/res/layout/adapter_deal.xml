@@ -8,7 +8,8 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="5dp"
-    android:paddingBottom="5dp">
+    android:paddingBottom="5dp"
+    android:clickable="false">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,16 +25,18 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/go_to_profile"
                 android:layout_width="match_parent"
-                android:layout_height="60dp">
+                android:layout_height="60dp"
+                android:background="@drawable/background_deal_profile">
 
-                <ImageView
+                <com.android.volley.toolbox.NetworkImageView
                     android:id="@+id/profile_image"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:padding="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="5dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/user_profile" />
+                    android:background="@drawable/background_image"  />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -81,16 +84,18 @@
                 android:background="@color/dark_grey" />
 
             <RelativeLayout
+                android:id="@+id/go_to_deal"
                 android:layout_width="match_parent"
-                android:layout_height="80dp">
+                android:layout_height="80dp"
+                android:background="@drawable/background_deal_deal">
 
-                <ImageView
+                <com.android.volley.toolbox.NetworkImageView
                     android:id="@+id/deal_image"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:padding="10dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_margin="5dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/user_profile" />
+                    android:background="@drawable/background_image" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"

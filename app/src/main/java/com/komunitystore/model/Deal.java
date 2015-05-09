@@ -63,6 +63,9 @@ public class Deal extends BaseResponse implements Serializable {
     @SerializedName("price")
     private Float price;
 
+    @SerializedName("users_like")
+    private List<String> users_like;
+
     @SerializedName("currency")
     private String currency;
 
@@ -184,6 +187,10 @@ public class Deal extends BaseResponse implements Serializable {
             stringPrice = stringPrice + " " + getCurrency();
             return stringPrice;
         }
+    }
+
+    public boolean hasUserLike(String username) {
+        return users_like.contains(username);
     }
 
     public void setPrice(Float price) {
