@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Komunity Store</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="back_to_close">Appuyer une nouvelle fois pour quitter</string>
+    <string name="action_settings">Settings</string>
+    <string name="email">Email</string>
+    <string name="username">Utilisateur</string>
+    <string name="password">Mot de passe</string>
+    <string name="login">Se connecter</string>
+    <string name="register">S\'enregister</string>
+    <string name="followers">followers</string>
+    <string name="subscribers">subscribers</string>
+    <string name="likes">likes</string>
+    <string name="follow">Suivre</string>
+    <string name="followed">Suivi</string>
+    <string name="deals">deals</string>
+    <string name="profile">Profil</string>
+    <string name="no_connection_title">Aucune connexion</string>
+    <string name="no_connection_message">Verifiez votre connection et réessayez</string>
+    <string name="error_title">Une erreur est survenue</string>
+    <string name="error_message">Veuillez réessayer plus tard</string>
+    <string name="loading_title">Chargement</string>
+    <string name="loading_message">Veuillez patentier</string>
+    <string name="posted_by">Posté par :</string>
+    <string name="post_a_deal">Poster un Deal</string>
+    <string name="deal_title">Titre *</string>
+    <string name="deal_content">Contenu *</string>
+    <string name="deal_currency">Monnaie *</string>
+    <string name="deal_type">Type *</string>
+    <string name="deal_price">Prix</string>
+</resources>

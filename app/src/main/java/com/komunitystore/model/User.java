@@ -49,6 +49,9 @@ public class User extends BaseResponse implements Serializable {
     @SerializedName("nb_followers")
     private int nb_followers;
 
+    @SerializedName("already_follow")
+    private boolean followed;
+
     public int getId() {
         return id;
     }
@@ -132,5 +135,9 @@ public class User extends BaseResponse implements Serializable {
 
     public int getNb_followers() {
         return nb_followers;
+    }
+
+    public boolean isFollowed() {
+        return followed;
     }
 }

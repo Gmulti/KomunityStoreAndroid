@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.komunitystore.R;
@@ -82,7 +81,7 @@ public class DealAdapter extends ArrayAdapter<Deal> {
         title.setText(deal.getTitle());
         message.setText(deal.getContent());
         username.setText(deal.getUser().getUsername());
-        geoloc.setVisibility((deal.getLat() == 0.0 && deal.getLng() == 0.0) ? View.GONE : View.VISIBLE);
+        geoloc.setVisibility(deal.isGeoloc() ? View.VISIBLE : View.GONE);
         priceText.setText(deal.getStringPrice());
         try {
             date.setText(deal.getDate());
@@ -112,7 +111,7 @@ public class DealAdapter extends ArrayAdapter<Deal> {
         }
         FragmentActivity activity = (FragmentActivity) getContext();
         activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.activity_from_bottom, android.R.anim.fade_out);
+        activity.overridePendingTransition(R.anim.activity_from_left, R.anim.activity_to_right);
     }
 
     /*private class DealHolder {

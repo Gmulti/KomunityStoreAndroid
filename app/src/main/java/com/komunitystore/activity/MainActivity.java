@@ -3,25 +3,37 @@ package com.komunitystore.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringSystem;
+import com.komunitystore.KSApp;
 import com.komunitystore.R;
 import com.komunitystore.fragment.KSFragment;
 import com.komunitystore.fragment.main.ListDealFragment;
 import com.komunitystore.fragment.main.MainFragment;
+import com.komunitystore.utils.ColorUtils;
 import com.komunitystore.utils.KSEvent;
 import com.komunitystore.view.KSActionBar;
+import com.komunitystore.view.KSSearchView;
 import com.komunitystore.view.KSTabbar;
 import com.komunitystore.view.KSTabbarButton;
 
 import de.greenrobot.event.EventBus;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements KSFragment.OnAttachListener {
 
     private KSActionBar _actionBar;
     private KSTabbar _tabbar;
+    private KSSearchView _search;
+    private View _actionBarShadow;
 
     private boolean _backToQuit = false;
 
@@ -37,18 +49,14 @@ public class MainActivity extends FragmentActivity {
 
             }
         }));
-        _tabbar.setMiddleButton(new KSTabbarButton(R.drawable.list, "List", new View.OnClickListener() {
+        _tabbar.setRightButton(new KSTabbarButton(R.drawable.list, "List", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         }));
-        _tabbar.setRightButton(new KSTabbarButton(R.drawable.search, "Search", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        }));
+        _search = (KSSearchView) findViewById(R.id.search_bar);
+        _actionBarShadow = findViewById(R.id.action_bar_shadow);
         showFragment(new MainFragment());
     }
 
@@ -58,12 +66,6 @@ public class MainActivity extends FragmentActivity {
         } else {
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
         }
-        _actionBar.setTitle(fragment.getTitle());
-        _actionBar.setLeftButton(fragment.getLeftButton());
-        _actionBar.setRightButton1(fragment.getRightButton1());
-        _actionBar.setRightButton2(fragment.getRightButton2());
-        _actionBar.setVisibility(fragment.shouldDisplayActionBar() ? View.VISIBLE : View.GONE);
-        _tabbar.setVisibility(fragment.shouldDisplayTabbar() ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -71,7 +73,7 @@ public class MainActivity extends FragmentActivity {
         if (_backToQuit) {
             super.onBackPressed();
         } else {
-            Toast.makeText(this, "Appuyer une nouvelle fois pour quitter", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.back_to_close, Toast.LENGTH_SHORT).show();
             _backToQuit = true;
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -86,6 +88,7 @@ public class MainActivity extends FragmentActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        ((KSApp) getApplication()).setCurrentActivity(this);
     }
 
     @Override
@@ -94,7 +97,13 @@ public class MainActivity extends FragmentActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    public void onEventMainThread(KSEvent event){
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ((KSApp) getApplication()).setCurrentActivity(null);
+    }
+
+    public void onEventMainThread(KSEvent event) {
         switch (event.getType()) {
             case LOGIN:
                 if (event.getError() == KSEvent.Error.NO_ERROR) {
@@ -102,5 +111,25 @@ public class MainActivity extends FragmentActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onAttach(KSFragment fragment) {
+        _actionBar.setTitle(fragment.getTitle());
+        _actionBar.setLeftButton(fragment.getLeftButton());
+        _actionBar.setRightButton1(fragment.getRightButton1());
+        _actionBar.setRightButton2(fragment.getRightButton2());
+        _actionBar.setVisibility(fragment.shouldDisplayActionBar() ? View.VISIBLE : View.GONE);
+        _actionBarShadow.setVisibility(fragment.shouldDisplayActionBar() ? View.VISIBLE : View.GONE);
+        _tabbar.setVisibility(fragment.shouldDisplayTabbar() ? View.VISIBLE : View.GONE);
+        _search.setVisibility(fragment.shouldDisplaySearchBar() ? View.VISIBLE : View.GONE);
+    }
+
+    public KSActionBar getKSActionBar() {
+        return _actionBar;
+    }
+
+    public KSSearchView getKSSearchView() {
+        return _search;
     }
 }

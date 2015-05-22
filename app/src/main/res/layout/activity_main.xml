@@ -1,26 +1,44 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.komunitystore.view.KSActionBar
         android:id="@+id/action_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ks_action_bar_size"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true" />
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_below="@+id/action_bar"
-        android:layout_above="@+id/tabbar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tabbar"
+        android:layout_below="@+id/action_bar">
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.komunitystore.view.KSSearchView
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
 
     <com.komunitystore.view.KSTabbar
         android:id="@+id/tabbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ks_tabbar_size"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true" />
+
+    <View
+        android:id="@+id/action_bar_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_below="@+id/action_bar"
+        android:background="@drawable/shadow_bottom" />
 
 </RelativeLayout>

@@ -17,4 +17,10 @@
         android:layout_above="@+id/tabbar"
         android:layout_below="@+id/action_bar" />
 
+    <View
+        android:layout_below="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@drawable/shadow_bottom"/>
+
 </RelativeLayout>

@@ -18,15 +18,19 @@ import com.komunitystore.R;
  */
 public class KSTabbar extends FrameLayout {
 
-    private LinearLayout _leftLayout, _middleLayout, _rightLayout;
-    private TextView _leftText, _middleText, _rightText;
-    private ImageView _leftImage, _middleImage, _rightImage;
+    private LinearLayout _leftLayout, _rightLayout;
+    // _middleLayout
+    private TextView _leftText, _rightText;
+    // _middleText
+    private ImageView _leftImage, _rightImage;
+    // _middleImage
 
-    private ButtonType _selectedButton = ButtonType.MIDDLE;
+    private ButtonType _selectedButton = ButtonType.RIGHT;
 
     private enum ButtonType {
-        LEFT, MIDDLE, RIGHT
+        LEFT, RIGHT
     }
+    // MIDDLE
 
     public KSTabbar(Context context) {
         super(context);
@@ -55,9 +59,9 @@ public class KSTabbar extends FrameLayout {
         _leftText = (TextView) root.findViewById(R.id.left_text);
         _leftImage = (ImageView) root.findViewById(R.id.left_image);
 
-        _middleLayout = (LinearLayout) root.findViewById(R.id.middle_layout);
-        _middleText = (TextView) root.findViewById(R.id.middle_text);
-        _middleImage = (ImageView) root.findViewById(R.id.middle_image);
+        //_middleLayout = (LinearLayout) root.findViewById(R.id.middle_layout);
+        //_middleText = (TextView) root.findViewById(R.id.middle_text);
+        //_middleImage = (ImageView) root.findViewById(R.id.middle_image);
 
         _rightLayout = (LinearLayout) root.findViewById(R.id.right_layout);
         _rightText = (TextView) root.findViewById(R.id.right_text);
@@ -69,20 +73,20 @@ public class KSTabbar extends FrameLayout {
 
     private void displaySelectedButton() {
         _leftImage.setColorFilter(getResources().getColor(R.color.dark_grey));
-        _middleImage.setColorFilter(getResources().getColor(R.color.dark_grey));
+        //_middleImage.setColorFilter(getResources().getColor(R.color.dark_grey));
         _rightImage.setColorFilter(getResources().getColor(R.color.dark_grey));
         _leftText.setTextColor(getResources().getColor(R.color.dark_grey));
-        _middleText.setTextColor(getResources().getColor(R.color.dark_grey));
+        //_middleText.setTextColor(getResources().getColor(R.color.dark_grey));
         _rightText.setTextColor(getResources().getColor(R.color.dark_grey));
         switch (_selectedButton) {
             case LEFT:
                 _leftImage.setColorFilter(getResources().getColor(R.color.darker_grey));
                 _leftText.setTextColor(getResources().getColor(R.color.darker_grey));
                 break;
-            case MIDDLE:
-                _middleImage.setColorFilter(getResources().getColor(R.color.darker_grey));
-                _middleText.setTextColor(getResources().getColor(R.color.darker_grey));
-                break;
+            //case MIDDLE:
+            //    _middleImage.setColorFilter(getResources().getColor(R.color.darker_grey));
+            //    _middleText.setTextColor(getResources().getColor(R.color.darker_grey));
+            //    break;
             case RIGHT:
                 _rightImage.setColorFilter(getResources().getColor(R.color.darker_grey));
                 _rightText.setTextColor(getResources().getColor(R.color.darker_grey));
@@ -103,18 +107,18 @@ public class KSTabbar extends FrameLayout {
         _leftImage.setImageResource(button.getResource());
     }
 
-    public void setMiddleButton(final KSTabbarButton button) {
-        _middleLayout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _selectedButton = ButtonType.MIDDLE;
-                displaySelectedButton();
-                button.getListener().onClick(_middleLayout);
-            }
-        });
-        _middleText.setText(button.getText());
-        _middleImage.setImageResource(button.getResource());
-    }
+    //public void setMiddleButton(final KSTabbarButton button) {
+    //    _middleLayout.setOnClickListener(new OnClickListener() {
+    //        @Override
+    //        public void onClick(View v) {
+    //            _selectedButton = ButtonType.MIDDLE;
+    //            displaySelectedButton();
+    //            button.getListener().onClick(_middleLayout);
+    //        }
+    //    });
+    //    _middleText.setText(button.getText());
+    //    _middleImage.setImageResource(button.getResource());
+    //}
 
     public void setRightButton(final KSTabbarButton button) {
         _rightLayout.setOnClickListener(new OnClickListener() {

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="red">#e11c3b</color>
-    <color name="red_statut_bar">#b4162f</color>
+    <color name="dark_red">#b4162f</color>
+    <color name="darker_red">#901125</color>
     <color name="blue">#356fbb</color>
+    <color name="dark_blue">#2a5895</color>
+    <color name="darker_blue">#254d82</color>
     <color name="light_blue">#80aec5e3</color>
     <color name="grey">#efefef</color>
     <color name="dark_grey">#cecece</color>

@@ -69,6 +69,12 @@ public class Deal extends BaseResponse implements Serializable {
     @SerializedName("currency")
     private String currency;
 
+    @SerializedName("already_share")
+    private boolean shared;
+
+    @SerializedName("already_like")
+    private boolean liked;
+
     public int getId() {
         return id;
     }
@@ -231,6 +237,10 @@ public class Deal extends BaseResponse implements Serializable {
         return lng;
     }
 
+    public boolean isGeoloc() {
+        return (getLat() != 0.0 || getLng() != 0.0);
+    }
+
     public void setLng(double lng) {
         this.lng = lng;
     }
@@ -275,6 +285,14 @@ public class Deal extends BaseResponse implements Serializable {
         } else {
             return seconds + " sec";
         }
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public boolean isLiked() {
+        return liked;
     }
 
     @Override

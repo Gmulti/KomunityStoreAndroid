@@ -1,16 +1,25 @@
 package com.komunitystore.utils;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.komunitystore.KSApp;
 import com.komunitystore.R;
 import com.komunitystore.model.AccessToken;
 import com.komunitystore.model.Deal;
+import com.komunitystore.model.KSErrorResponse;
 import com.komunitystore.model.User;
 
 import java.util.HashMap;
@@ -37,6 +46,8 @@ public class NetworkManager {
     public static final String GET_ME = "/me.json";
     public static final String GET_DEALS = "/deals.json";
 
+    private static final String NO_INTERNET_CONNECTION = "no_internet_connection";
+
     private static NetworkManager _instance;
 
     private Context _context;
@@ -57,8 +68,82 @@ public class NetworkManager {
         return _instance;
     }
 
+    private Response.ErrorListener getErrorListener(final Response.ErrorListener errorListener) {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Activity currentActivity = ((KSApp) _context.getApplicationContext()).getCurrentActivity();
+                if (error.getMessage() != null) {
+                    if (!error.getMessage().equals(NO_INTERNET_CONNECTION)) {
+                        if (error.getMessage().contains("error_description")) {
+                            KSErrorResponse errorResponse = new Gson().fromJson(error.getMessage(), KSErrorResponse.class);
+                            new AlertDialog.Builder(currentActivity)
+                                    .setTitle(R.string.error_title)
+                                    .setMessage(errorResponse.getError_description())
+                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .create().show();
+                        } else {
+                            new AlertDialog.Builder(currentActivity)
+                                    .setTitle(R.string.error_title)
+                                    .setMessage(R.string.error_message)
+                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .create().show();
+                        }
+                    }
+                } else {
+                    new AlertDialog.Builder(currentActivity)
+                            .setTitle(R.string.error_title)
+                            .setMessage(R.string.error_message)
+                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .create().show();
+                }
+                errorListener.onErrorResponse(error);
+            }
+        };
+    }
+
+    private void addToQueue(Request request) {
+        if (isOnline()) {
+            _queue.add(request);
+        } else {
+            request.getErrorListener().onErrorResponse(new VolleyError(NO_INTERNET_CONNECTION));
+            new AlertDialog.Builder(_context)
+                    .setTitle(R.string.no_connection_title)
+                    .setMessage(R.string.no_connection_message)
+                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).create().show();
+        }
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
     public void getUserInfo(Response.Listener listener, Response.ErrorListener errorListener) {
-        _queue.add(new KSRequest(Request.Method.GET, BASE_URL_API + GET_ME, User.class, KSRequest.ReturnType.OBJECT, null, listener, errorListener, KSSharedPreferences.getInstance(_context).getAccessToken()));
+        addToQueue(new KSRequest(Request.Method.GET, BASE_URL_API + GET_ME, User.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
     public void login(String username, String password, Response.Listener listener, Response.ErrorListener errorListener) {
@@ -69,7 +154,7 @@ public class NetworkManager {
         params.put("client_secret", CLIENT_SECRET);
         params.put("grant_type", GRANT_TYPE);
         params.put("scope", SCOPE);
-        _queue.add(new KSRequest(Request.Method.POST, BASE_URL + POST_TOKEN, AccessToken.class, KSRequest.ReturnType.OBJECT, params, listener, errorListener));
+        addToQueue(new KSRequest(Request.Method.POST, BASE_URL + POST_TOKEN, AccessToken.class, KSRequest.ReturnType.OBJECT, params, listener, getErrorListener(errorListener)));
     }
 
     public void register(String email, String username, String password, Response.Listener listener, Response.ErrorListener errorListener) {
@@ -77,7 +162,7 @@ public class NetworkManager {
         params.put("email", email);
         params.put("username", username);
         params.put("password", password);
-        _queue.add(new KSRequest(Request.Method.POST, BASE_URL_PUBLIC + POST_REGISTER, User.class, KSRequest.ReturnType.OBJECT, params, listener, errorListener));
+        addToQueue(new KSRequest(Request.Method.POST, BASE_URL_PUBLIC + POST_REGISTER, User.class, KSRequest.ReturnType.OBJECT, params, listener, getErrorListener(errorListener)));
     }
 
     public void getDeals(Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener) {
@@ -95,7 +180,27 @@ public class NetworkManager {
                 count++;
             }
         }
-        _queue.add(new KSRequest(Request.Method.GET, url, Deal.class, KSRequest.ReturnType.ARRAY, null, listener, errorListener, KSSharedPreferences.getInstance(_context).getAccessToken()));
+        addToQueue(new KSRequest(Request.Method.GET, url, Deal.class, KSRequest.ReturnType.ARRAY, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void postDeal(Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + "/deals.json";
+        addToQueue(new KSRequest(Request.Method.POST, url, Deal.class, KSRequest.ReturnType.OBJECT, params, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void changeLikeDeal(boolean like, Deal deal, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + "/deals/" + deal.getId() + "/" + (like ? "likes" : "dislikes") + ".json";
+        addToQueue(new KSRequest(Request.Method.POST, url, Deal.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void shareDeal(Deal deal, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + "/deals/" + deal.getId() + "/shares.json";
+        addToQueue(new KSRequest(Request.Method.POST, url, Deal.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void changeFollowUser(boolean follow, User user, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + "/users/" + user.getId() + "/" + (follow ? "follows" : "unfollows") + ".json";
+        addToQueue(new KSRequest(Request.Method.POST, url, User.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
     public void getImage(NetworkImageView image, String url) {

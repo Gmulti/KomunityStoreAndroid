@@ -2,13 +2,7 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/red</item>
-        <item name="colorPrimaryDark">@color/red_statut_bar</item>
+        <item name="colorPrimaryDark">@color/dark_red</item>
         <item name="colorAccent">@color/red</item>
-        <!-- <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item> -->
-    </style>
-
-    <style name="WindowAnimationTransition">
-        <item name="android:windowEnterAnimation">@anim/activity_from_bottom</item>
-        <item name="android:windowExitAnimation">@anim/activity_to_bottom</item>
     </style>
 </resources>

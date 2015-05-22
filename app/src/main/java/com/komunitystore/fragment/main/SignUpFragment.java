@@ -65,8 +65,9 @@ public class SignUpFragment extends Fragment {
             }
         });
         _progress = new ProgressDialog(getActivity());
-        _progress.setTitle("Loading");
-        _progress.setMessage("Please wait");
+        _progress.setCancelable(false);
+        _progress.setTitle(R.string.loading_title);
+        _progress.setMessage(getResources().getString(R.string.loading_message));
         return root;
     }
 
@@ -92,32 +93,7 @@ public class SignUpFragment extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
                         _progress.dismiss();
-                        KSErrorResponse errorResponse = new Gson().fromJson(error.getMessage(), KSErrorResponse.class);
-                        if (errorResponse != null) {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle("Erreur")
-                                    .setMessage(errorResponse.getError_description())
-                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .create().show();
-                        } else {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle("An error has occured")
-                                    .setMessage("Try again later")
-                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .create().show();
-                        }
                     }
                 });
     }

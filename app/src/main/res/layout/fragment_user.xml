@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -15,8 +16,6 @@
             android:id="@+id/profile_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
             android:background="@drawable/background_image"
             android:padding="2dp" />
 
@@ -25,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:text="QA Service"
+            tools:text="QA Service"
             android:textColor="@android:color/black"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -53,13 +52,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="22" />
+                tools:text="22" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="followers" />
+                android:text="@string/followers" />
 
         </LinearLayout>
 
@@ -75,13 +74,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="22" />
+                tools:text="22" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="subscribers" />
+                android:text="@string/subscribers" />
 
         </LinearLayout>
 
@@ -97,13 +96,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="22" />
+                tools:text="22" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="deals" />
+                android:text="@string/deals" />
 
         </LinearLayout>
 
@@ -113,10 +112,10 @@
         android:id="@+id/follow_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/red"
-        android:text="Follow"
+        android:background="@drawable/background_button_border_red"
+        android:text="@string/follow"
         android:layout_margin="10dp"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/red" />
 
     <ListView
         android:id="@+id/list"

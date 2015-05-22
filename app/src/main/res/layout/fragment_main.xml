@@ -18,7 +18,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="Komunity Store"
+        android:text="@string/app_name"
         android:textColor="@color/red"
         android:textSize="30dp"
         android:textStyle="bold" />
@@ -53,7 +53,7 @@
                 android:layout_gravity="center"
                 android:background="@android:color/transparent"
                 android:paddingLeft="5dp"
-                android:text="Login"
+                android:text="@string/login"
                 android:textColor="@color/red"
                 android:textStyle="bold" />
 
@@ -76,7 +76,7 @@
                 android:layout_gravity="center"
                 android:background="@android:color/transparent"
                 android:paddingRight="5dp"
-                android:text="Register"
+                android:text="@string/register"
                 android:textColor="@color/red"
                 android:textStyle="bold" />
 

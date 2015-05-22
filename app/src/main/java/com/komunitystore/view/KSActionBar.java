@@ -69,6 +69,10 @@ public class KSActionBar extends FrameLayout {
         }
     }
 
+    public ImageButton getLeftButton() {
+        return _leftButton;
+    }
+
     public void setRightButton1(KSActionBarButton button) {
         if (button == null) {
             _rightButton1.setVisibility(GONE);
@@ -80,6 +84,10 @@ public class KSActionBar extends FrameLayout {
         }
     }
 
+    public ImageButton getRightButton1() {
+        return _rightButton1;
+    }
+
     public void setRightButton2(KSActionBarButton button) {
         if (button == null) {
             _rightButton2.setVisibility(GONE);
@@ -89,5 +97,9 @@ public class KSActionBar extends FrameLayout {
             _rightButton2.setVisibility(VISIBLE);
             _rightButton2.setOnClickListener(button.getListener());
         }
+    }
+
+    public ImageButton getRightButton2() {
+        return _rightButton2;
     }
 }

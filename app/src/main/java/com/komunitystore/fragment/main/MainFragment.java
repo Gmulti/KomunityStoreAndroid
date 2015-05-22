@@ -31,6 +31,8 @@ public class MainFragment extends KSFragment {
         View root = View.inflate(getActivity(), R.layout.fragment_main, null);
         _pager = (ViewPager) root.findViewById(R.id.pager);
         _pager.setAdapter(new MainFragmentPagerAdapter());
+        _pager.setPageMargin(20);
+        _pager.setPadding(20, 0, 20, 0);
         _pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -161,6 +163,11 @@ public class MainFragment extends KSFragment {
 
     @Override
     public boolean shouldDisplayTabbar() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldDisplaySearchBar() {
         return false;
     }
 }

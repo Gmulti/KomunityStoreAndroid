@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.NetworkImageView;
 import com.komunitystore.R;
 import com.komunitystore.activity.SecondaryActivity;
@@ -38,17 +40,61 @@ public class UserFragment extends KSFragment {
         View root = View.inflate(getActivity(), R.layout.fragment_user, null);
         _profileImage = (NetworkImageView) root.findViewById(R.id.profile_image);
         _profileName = (TextView) root.findViewById(R.id.profile_name);
-        _profileName.setText(_user.getUsername());
         _followers = (TextView) root.findViewById(R.id.followers);
-        _followers.setText(String.valueOf(_user.getNb_followers()));
         _subscribers = (TextView) root.findViewById(R.id.subscribers);
-        _subscribers.setText(String.valueOf(_user.getNb_subscribes()));
         _deals = (TextView) root.findViewById(R.id.deals);
-        _deals.setText(String.valueOf(_user.getNb_deals()));
         _follow = (Button) root.findViewById(R.id.follow_button);
         _list = (ListView) root.findViewById(R.id.list);
-
+        configureView();
         return root;
+    }
+
+    private void configureView() {
+        _profileName.setText(_user.getUsername());
+        _followers.setText(String.valueOf(_user.getNb_followers()));
+        _subscribers.setText(String.valueOf(_user.getNb_subscribes()));
+        _deals.setText(String.valueOf(_user.getNb_deals()));
+        if (_user.isFollowed()) {
+            _follow.setText(R.string.followed);
+            _follow.setBackgroundResource(R.drawable.background_button_red);
+            _follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NetworkManager.getInstance(getActivity()).changeFollowUser(false, _user, new Response.Listener<User>() {
+                        @Override
+                        public void onResponse(User response) {
+                            _user = response;
+                            configureView();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+                }
+            });
+        } else {
+            _follow.setText(R.string.follow);
+            _follow.setBackgroundResource(R.drawable.background_button_border_red);
+            _follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NetworkManager.getInstance(getActivity()).changeFollowUser(true, _user, new Response.Listener<User>() {
+                        @Override
+                        public void onResponse(User response) {
+                            _user = response;
+                            configureView();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override
@@ -58,7 +104,7 @@ public class UserFragment extends KSFragment {
 
     @Override
     public String getTitle() {
-        return "Profile";
+        return getResources().getString(R.string.profile);
     }
 
     @Override
@@ -83,6 +129,11 @@ public class UserFragment extends KSFragment {
 
     @Override
     public boolean shouldDisplayTabbar() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldDisplaySearchBar() {
         return false;
     }
 }

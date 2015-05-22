@@ -7,9 +7,9 @@
     android:clickable="false"
     android:orientation="vertical"
     android:paddingBottom="5dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="5dp">
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/background_deal"
+            android:background="@drawable/background_adapter_deal"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -53,7 +53,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Username"
+                        tools:text="Username"
                         android:textColor="@color/blue"
                         android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="il y a 5 min"
+                        tools:text="il y a 5 min"
                         android:textColor="@color/date_grey" />
 
                 </LinearLayout>
@@ -87,7 +87,7 @@
             <RelativeLayout
                 android:id="@+id/go_to_deal"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/background_deal_deal">
 
                 <com.android.volley.toolbox.NetworkImageView
@@ -101,34 +101,32 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/price"
                     android:layout_toRightOf="@+id/deal_image"
+                    android:layout_centerVertical="true"
                     android:orientation="vertical"
-                    android:padding="10dp"
-                    android:weightSum="2">
+                    android:padding="10dp">
 
                     <TextView
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
                         android:ellipsize="marquee"
                         android:gravity="center|left"
                         android:maxLines="2"
-                        android:text="Titre du deal"
+                        tools:text="Titre du deal"
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/message"
                         android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
                         android:ellipsize="marquee"
                         android:gravity="center|left"
                         android:singleLine="true"
-                        android:text="Code promo"
+                        tools:text="Code promo"
                         android:textColor="@android:color/black" />
 
                 </LinearLayout>
@@ -146,13 +144,12 @@
                     android:paddingRight="10dp"
                     android:paddingTop="5dp"
                     android:scaleType="centerInside"
-                    android:text="Price"
+                    tools:text="Price"
                     android:textColor="@color/red" />
 
             </RelativeLayout>
 
         </LinearLayout>
-
 
     </LinearLayout>
 
