@@ -4,24 +4,28 @@
     android:layout_height="@dimen/ks_action_bar_size"
     android:background="@color/red">
 
-    <ImageButton
-        android:id="@+id/left_image"
-        android:layout_width="@dimen/ks_action_bar_size"
-        android:layout_height="@dimen/ks_action_bar_size"
-        android:padding="@dimen/ks_action_bar_button_padding"
-        android:scaleType="centerInside"
-        android:background="@android:color/transparent" />
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical|left"
-        android:textColor="@android:color/white"
-        android:padding="10dp"
-        android:textSize="20dp"
-        android:layout_toRightOf="@+id/left_image"
-        android:layout_toLeftOf="@+id/right_button_layout"/>
+        android:layout_toLeftOf="@+id/right_button_layout">
+
+        <ImageButton
+            android:id="@+id/left_button"
+            android:layout_width="@dimen/ks_action_bar_size"
+            android:layout_height="@dimen/ks_action_bar_size"
+            android:background="@android:color/transparent"
+            android:padding="@dimen/ks_action_bar_button_padding"
+            android:scaleType="centerInside" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|left"
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="20dp" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/right_button_layout"
@@ -34,17 +38,17 @@
             android:id="@+id/right_button2"
             android:layout_width="@dimen/ks_action_bar_size"
             android:layout_height="@dimen/ks_action_bar_size"
+            android:background="@android:color/transparent"
             android:padding="@dimen/ks_action_bar_button_padding"
-            android:scaleType="centerInside"
-            android:background="@android:color/transparent" />
+            android:scaleType="centerInside" />
 
         <ImageButton
             android:id="@+id/right_button1"
             android:layout_width="@dimen/ks_action_bar_size"
             android:layout_height="@dimen/ks_action_bar_size"
+            android:background="@android:color/transparent"
             android:padding="@dimen/ks_action_bar_button_padding"
-            android:scaleType="centerInside"
-            android:background="@android:color/transparent" />
+            android:scaleType="centerInside" />
 
     </LinearLayout>
 

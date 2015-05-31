@@ -3,13 +3,10 @@ package com.komunitystore.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Media implements Serializable {
-
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+0200'");
 
     @SerializedName("id")
     private int id;
@@ -27,10 +24,10 @@ public class Media implements Serializable {
     private String url;
 
     @SerializedName("created")
-    private String created;
+    private Date created;
 
     @SerializedName("updated")
-    private String updated;
+    private Date updated;
 
     @SerializedName("thumbnails_url")
     private ThumbnailUrl thumbnails_url;
@@ -68,28 +65,28 @@ public class Media implements Serializable {
     }
 
     public String getUrl() {
-        return url;
+        return "http://" + url;
     }
 
     public void setUrl(String url) {
         this.url = url;
     }
 
-    public Date getCreated() throws ParseException {
-        return sdf.parse(created);
+    public Date getCreated() {
+        return created;
     }
 
     public void setCreated(Date created) {
-        this.created = sdf.format(created);
+        this.created = created;
     }
 
-    public Date getUpdated() throws ParseException {
+    public Date getUpdated() {
 
-        return sdf.parse(updated);
+        return updated;
     }
 
     public void setUpdated(Date updated) {
-        this.updated = sdf.format(updated);
+        this.updated = updated;
     }
 
     public ThumbnailUrl getThumbnails_url() {

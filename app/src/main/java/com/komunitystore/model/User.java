@@ -4,14 +4,11 @@ package com.komunitystore.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class User extends BaseResponse implements Serializable {
-
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+0200'");
 
     @SerializedName("id")
     private int id;
@@ -32,10 +29,10 @@ public class User extends BaseResponse implements Serializable {
     private Integer nb_comments;
 
     @SerializedName("created")
-    private String created;
+    private Date created;
 
     @SerializedName("updated")
-    private String updated;
+    private Date updated;
 
     @SerializedName("deals")
     private List<Deal> deals;
@@ -51,6 +48,9 @@ public class User extends BaseResponse implements Serializable {
 
     @SerializedName("already_follow")
     private boolean followed;
+
+    @SerializedName("media_profile")
+    private Media media_profile;
 
     public int getId() {
         return id;
@@ -100,21 +100,20 @@ public class User extends BaseResponse implements Serializable {
         this.nb_comments = nb_comments;
     }
 
-    public Date getCreated() throws ParseException {
-        return sdf.parse(created);
+    public Date getCreated() {
+        return created;
     }
 
     public void setCreated(Date created) {
-        this.created = sdf.format(created);
+        this.created = created;
     }
 
-    public Date getUpdated() throws ParseException {
-
-        return sdf.parse(updated);
+    public Date getUpdated() {
+        return updated;
     }
 
     public void setUpdated(Date updated) {
-        this.updated = sdf.format(updated);
+        this.updated = updated;
     }
 
     public List<Deal> getDeals() {
@@ -139,5 +138,9 @@ public class User extends BaseResponse implements Serializable {
 
     public boolean isFollowed() {
         return followed;
+    }
+
+    public Media getMedia_profile() {
+        return media_profile;
     }
 }

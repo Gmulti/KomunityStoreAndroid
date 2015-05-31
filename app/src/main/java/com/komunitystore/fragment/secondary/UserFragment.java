@@ -1,23 +1,34 @@
 package com.komunitystore.fragment.secondary;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.komunitystore.R;
 import com.komunitystore.activity.SecondaryActivity;
+import com.komunitystore.adapter.DealAdapter;
 import com.komunitystore.fragment.KSFragment;
 import com.komunitystore.model.Deal;
 import com.komunitystore.model.User;
 import com.komunitystore.utils.NetworkManager;
 import com.komunitystore.view.KSActionBarButton;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Tanguy on 09/05/2015.
@@ -26,10 +37,14 @@ public class UserFragment extends KSFragment {
 
     private User _user;
 
+    private ArrayList<Deal> _userDeals;
+
     private NetworkImageView _profileImage;
     private TextView _profileName, _followers, _subscribers, _deals;
     private Button _follow;
+    private ProgressBar _progress;
     private ListView _list;
+    private DealAdapter _adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,6 +59,7 @@ public class UserFragment extends KSFragment {
         _subscribers = (TextView) root.findViewById(R.id.subscribers);
         _deals = (TextView) root.findViewById(R.id.deals);
         _follow = (Button) root.findViewById(R.id.follow_button);
+        _progress = (ProgressBar) root.findViewById(R.id.progress);
         _list = (ListView) root.findViewById(R.id.list);
         configureView();
         return root;
@@ -95,6 +111,39 @@ public class UserFragment extends KSFragment {
                 }
             });
         }
+        if (_user.getMedia_profile() != null && _user.getMedia_profile().getThumbnails_url() != null) {
+            String imgUrl = _user.getMedia_profile().getThumbnails_url().getUser_profile_tile_large();
+            if (!TextUtils.isEmpty(imgUrl)) {
+                NetworkManager.getInstance(getActivity()).getImage(_profileImage, imgUrl);
+            } else {
+                _profileImage.setImageResource(R.drawable.no_image);
+            }
+        }
+        getUserDeals();
+    }
+
+    private void getUserDeals() {
+        _progress.setVisibility(View.VISIBLE);
+        Map<String, String> params = new HashMap<>();
+        params.put("user_id", String.valueOf(_user.getId()));
+        NetworkManager.getInstance(getActivity()).getDeals(params, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                _progress.setVisibility(View.GONE);
+                Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'+0200'").create();
+                _userDeals = new ArrayList<Deal>();
+                for (int i = 0; i < response.length(); i++) {
+                    _userDeals.add(gson.fromJson(response.optJSONObject(i).toString(), Deal.class));
+                }
+                _adapter = new DealAdapter(getActivity(), _userDeals, DealAdapter.Type.REDUCE);
+                _list.setAdapter(_adapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                _progress.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

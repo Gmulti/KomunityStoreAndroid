@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Komunity Store</string>
-
+    <string name="language">en</string>
     <string name="hello_world">Hello world!</string>
     <string name="back_to_close">Press again to quit</string>
     <string name="action_settings">Settings</string>
@@ -16,17 +16,31 @@
     <string name="followed">Followed</string>
     <string name="deals">deals</string>
     <string name="profile">Profile</string>
+    <string name="my_profile">My Profile</string>
     <string name="no_connection_title">Connection Error</string>
     <string name="no_connection_message">Please connect to a working Internet connection and try again</string>
     <string name="error_title">An error has occured</string>
     <string name="error_message">Please try again later</string>
     <string name="loading_title">Loading</string>
     <string name="loading_message">Please wait</string>
+    <string name="success">Done</string>
+    <string name="fail_location">Couldn\'t locate you, please make sure you turned your GPS ON or you are connected</string>
     <string name="posted_by">Posted By :</string>
     <string name="post_a_deal">Post a Deal</string>
     <string name="deal_title">Title *</string>
     <string name="deal_content">Content *</string>
     <string name="deal_currency">Currency *</string>
     <string name="deal_type">Type *</string>
-    <string name="deal_price">Price</string>
+    <string name="deal_price">Price *</string>
+    <string name="deal_promo_code">Promo Code *</string>
+    <string name="deal_reduc">Reduction *</string>
+    <string name="fill_info_title">Some infos are missing</string>
+    <string name="fill_info_message">Please fill all the fields marked with a *</string>
+    <string name="deal_send_success_title">Deal successfully send</string>
+    <string name="user_image_successfully_change">User image successfully send</string>
+    <string name="post">Post</string>
+    <string name="take_photo">Choose a picture</string>
+    <string name="bon_plan">Good deal</string>
+    <string name="code_promo">Promo Code</string>
+    <string name="reduction">Reduction</string>
 </resources>

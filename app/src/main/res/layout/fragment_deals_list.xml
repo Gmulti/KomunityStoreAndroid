@@ -2,32 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
-    <ListView
-        android:id="@+id/list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@android:color/transparent"
-        android:overScrollMode="never"
-        android:scrollbars="none" />
+        android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:indeterminate="true" />
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@drawable/horizontal_divider"
+            android:overScrollMode="never"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:scrollbars="none"
+            />
 
-    <ImageButton
-        android:id="@+id/refresh"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerInParent="true"
-        android:background="@android:color/transparent"
-        android:padding="10dp"
-        android:tint="@color/blue"
-        android:scaleType="centerInside"
-        android:src="@drawable/refresh" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

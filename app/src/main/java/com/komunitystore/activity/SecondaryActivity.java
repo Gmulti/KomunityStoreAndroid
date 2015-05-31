@@ -1,6 +1,11 @@
 package com.komunitystore.activity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
@@ -10,9 +15,16 @@ import com.komunitystore.KSApp;
 import com.komunitystore.R;
 import com.komunitystore.fragment.KSFragment;
 import com.komunitystore.fragment.secondary.DealDetailsFragment;
+import com.komunitystore.fragment.secondary.PostDealFragment;
 import com.komunitystore.fragment.secondary.UserFragment;
+import com.komunitystore.utils.KSEvent;
+import com.komunitystore.utils.Singleton;
 import com.komunitystore.view.KSActionBar;
 import com.komunitystore.view.KSTabbar;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
 

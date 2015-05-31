@@ -96,6 +96,16 @@ public class KSSearchView extends FrameLayout {
         }
     }
 
+    public void expandWithoutAnimation(final boolean expand) {
+        if (!isAnimated) {
+            if (expand) {
+                setY(0);
+            } else {
+                setY(getMeasuredHeight());
+            }
+        }
+    }
+
     public void setOnSearchViewAnimatedListener(OnSearchViewAnimated listener) {
         _listener = listener;
     }

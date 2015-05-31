@@ -8,6 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.komunitystore.model.AccessToken;
 
 import org.json.JSONArray;
@@ -24,7 +25,7 @@ public class KSRequest extends Request {
         OBJECT, ARRAY
     }
 
-    private final Gson _gson = new Gson();
+    private Gson _gson;
     private Response.Listener _listener;
     private Class _clazz;
     private Map<String, String> _params;
@@ -37,6 +38,7 @@ public class KSRequest extends Request {
         _clazz = clazz;
         _params = params;
         _returnType = returnType;
+        _gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
     }
 
     public KSRequest(int method, String url, Class clazz, ReturnType returnType, Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener, AccessToken accessToken) {
@@ -46,6 +48,7 @@ public class KSRequest extends Request {
         _params = params;
         _returnType = returnType;
         _accessToken = accessToken;
+        _gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
     }
 
     @Override
@@ -58,6 +61,8 @@ public class KSRequest extends Request {
         Map<String, String> headers = new HashMap<>(super.getHeaders());
         if (_accessToken != null) {
             headers.put("Accept", "application/json");
+            // TODO send language
+            //headers.put("Language", "application/json");
             headers.put("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
         }
         return headers;
@@ -75,9 +80,7 @@ public class KSRequest extends Request {
     @Override
     protected Response parseNetworkResponse(NetworkResponse response) {
         try {
-            String json = new String(
-                    response.data,
-                    HttpHeaderParser.parseCharset(response.headers));
+            String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             switch (_returnType) {
                 case OBJECT:
                 default:

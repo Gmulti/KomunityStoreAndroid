@@ -1,12 +1,15 @@
 package com.komunitystore.fragment.secondary;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -17,10 +20,9 @@ import com.komunitystore.activity.SecondaryActivity;
 import com.komunitystore.fragment.KSFragment;
 import com.komunitystore.model.Deal;
 import com.komunitystore.utils.NetworkManager;
+import com.komunitystore.utils.Singleton;
 import com.komunitystore.view.KSActionBarButton;
 import com.melnykov.fab.FloatingActionButton;
-
-import java.text.ParseException;
 
 /**
  * Created by Tanguy on 09/05/2015.
@@ -34,6 +36,7 @@ public class DealDetailsFragment extends KSFragment {
     private TextView _username, _date, _title, _desc, _likeCount;
     private ImageButton _share;
     private LinearLayout _likeButton;
+    private RelativeLayout _dealImageLayout;
 
     private FloatingActionButton _go;
 
@@ -51,6 +54,7 @@ public class DealDetailsFragment extends KSFragment {
         _title = (TextView) root.findViewById(R.id.deal_title);
         _desc = (TextView) root.findViewById(R.id.deal_desc);
         _share = (ImageButton) root.findViewById(R.id.share);
+        _dealImageLayout = (RelativeLayout) root.findViewById(R.id.deal_image_layout);
         _likeButton = (LinearLayout) root.findViewById(R.id.like_button);
         _likeCount = (TextView) root.findViewById(R.id.like_count);
         _likeImage = (ImageView) root.findViewById(R.id.like_image);
@@ -61,40 +65,49 @@ public class DealDetailsFragment extends KSFragment {
 
     private void configureView() {
         _username.setText(_deal.getUser().getUsername());
-        try {
-            _date.setText(_deal.getDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        _date.setText(_deal.getDate());
         _title.setText(_deal.getTitle());
         _desc.setText(_deal.getContent());
+        if (_deal.getUser().getMedia_profile() != null && _deal.getUser().getMedia_profile().getThumbnails_url() != null) {
+            String imgUrl = _deal.getUser().getMedia_profile().getThumbnails_url().getUser_profile_tile_large();
+            if (!TextUtils.isEmpty(imgUrl)) {
+                NetworkManager.getInstance(getActivity()).getImage(_profileImage, imgUrl);
+            } else {
+                _profileImage.setImageResource(R.drawable.no_image);
+            }
+        }
         if (_deal.isGeoloc()) {
             _go.setVisibility(View.VISIBLE);
         } else {
             _go.setVisibility(View.GONE);
         }
-        if (_deal.getMedias().size() > 0 && _deal.getMedias().get(0).getThumbnails_url() != null) {
-            NetworkManager.getInstance(getActivity()).getImage(_dealImage, _deal.getMedias().get(0).getThumbnails_url().getImage_deal());
+        if (_deal.getMedias().size() > 0 && _deal.getMedias().get(0).getThumbnails_url() != null && !TextUtils.isEmpty(_deal.getMedias().get(0).getThumbnails_url().getImage_deal_large())) {
+            _dealImageLayout.setVisibility(View.VISIBLE);
+            NetworkManager.getInstance(getActivity()).getImage(_dealImage, _deal.getMedias().get(0).getThumbnails_url().getImage_deal_large());
         } else {
-            _dealImage.setImageResource(R.drawable.no_image);
+            _dealImageLayout.setVisibility(View.GONE);
         }
-        if (_deal.isLiked()) {
+        if (_deal.hasUserLike(Singleton.getInstance().getCurrentUser().getUsername())) {
             _likeButton.setBackgroundResource(R.drawable.background_button_blue);
             _likeCount.setTextColor(getResources().getColor(android.R.color.white));
             _likeImage.setColorFilter(getResources().getColor(android.R.color.white));
             _likeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
                     NetworkManager.getInstance(getActivity()).changeLikeDeal(false, _deal, new Response.Listener<Deal>() {
                         @Override
                         public void onResponse(Deal response) {
+                            progress.dismiss();
                             _deal = response;
+                            Singleton.getInstance().replaceDeal(_deal);
                             configureView();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             error.printStackTrace();
+                            progress.dismiss();
                         }
                     });
                 }
@@ -106,9 +119,11 @@ public class DealDetailsFragment extends KSFragment {
             _likeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
                     NetworkManager.getInstance(getActivity()).changeLikeDeal(true, _deal, new Response.Listener<Deal>() {
                         @Override
                         public void onResponse(Deal response) {
+                            progress.dismiss();
                             _deal = response;
                             configureView();
                         }
@@ -116,6 +131,7 @@ public class DealDetailsFragment extends KSFragment {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             error.printStackTrace();
+                            progress.dismiss();
                         }
                     });
                 }
@@ -146,7 +162,7 @@ public class DealDetailsFragment extends KSFragment {
                 }
             });
         }
-        _likeCount.setText(String.valueOf(_deal.getNb_users_likes()));
+        _likeCount.setText(String.valueOf(_deal.getUserLikesCount()));
     }
 
     @Override

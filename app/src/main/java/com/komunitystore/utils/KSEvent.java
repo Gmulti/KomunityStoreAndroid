@@ -10,7 +10,7 @@ public class KSEvent {
     private Object _object;
 
     public enum Type {
-        LOGIN, REGISTER
+        LOGIN, REGISTER, FOLLOW_DEALS, PROXIMITY_DEALS, MY_DEALS
     }
 
     public enum Error {

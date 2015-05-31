@@ -43,7 +43,7 @@ public class KSActionBar extends FrameLayout {
 
     private void init() {
         View root = View.inflate(getContext(), R.layout.ks_action_bar, null);
-        _leftButton = (ImageButton) root.findViewById(R.id.left_image);
+        _leftButton = (ImageButton) root.findViewById(R.id.left_button);
         _leftButton.setColorFilter(getResources().getColor(android.R.color.white));
         _rightButton1 = (ImageButton) root.findViewById(R.id.right_button1);
         _rightButton1.setColorFilter(getResources().getColor(android.R.color.white));
@@ -60,7 +60,7 @@ public class KSActionBar extends FrameLayout {
 
     public void setLeftButton(KSActionBarButton button) {
         if (button == null) {
-            _leftButton.setVisibility(INVISIBLE);
+            _leftButton.setVisibility(GONE);
             _leftButton.setOnClickListener(null);
         } else {
             _leftButton.setImageResource(button.getResource());

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -22,9 +23,9 @@ import com.komunitystore.model.Deal;
 import com.komunitystore.model.KSErrorResponse;
 import com.komunitystore.model.User;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,7 +59,7 @@ public class NetworkManager {
     private NetworkManager(Context context) {
         _context = context;
         _queue = Volley.newRequestQueue(context);
-        _imageLoader = new ImageLoader(_queue, new LruBitmapCache(LruBitmapCache.getCacheSize(_context)));
+        _imageLoader = new ImageLoader(_queue, new LruBitmapCache());
     }
 
     public static NetworkManager getInstance(Context context) {
@@ -183,9 +184,16 @@ public class NetworkManager {
         addToQueue(new KSRequest(Request.Method.GET, url, Deal.class, KSRequest.ReturnType.ARRAY, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
-    public void postDeal(Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener) {
+    public void postDeal(Map<String, String> params, ArrayList<Bitmap> bitmaps, Response.Listener listener) {
         String url = BASE_URL_API + "/deals.json";
-        addToQueue(new KSRequest(Request.Method.POST, url, Deal.class, KSRequest.ReturnType.OBJECT, params, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+        KSMultiPartRequest request = new KSMultiPartRequest(_context, url, params, bitmaps, listener, KSSharedPreferences.getInstance(_context).getAccessToken());
+        request.execute();
+    }
+
+    public void changeUserImage(Bitmap bitmap, Response.Listener listener) {
+        String url = BASE_URL_API + "/users/" + Singleton.getInstance().getCurrentUser().getId() + "/images.json";
+        KSMultiPartRequest request = new KSMultiPartRequest(_context, url, bitmap, listener, KSSharedPreferences.getInstance(_context).getAccessToken());
+        request.execute();
     }
 
     public void changeLikeDeal(boolean like, Deal deal, Response.Listener listener, Response.ErrorListener errorListener) {
@@ -204,7 +212,6 @@ public class NetworkManager {
     }
 
     public void getImage(NetworkImageView image, String url) {
-        image.setErrorImageResId(R.drawable.no_image);
         image.setImageUrl(url, _imageLoader);
     }
 }

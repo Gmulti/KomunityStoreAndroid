@@ -14,17 +14,25 @@
 
         <RelativeLayout
             android:id="@+id/profile_image_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginLeft="20dp"
             android:background="@color/grey"
             android:padding="2dp">
 
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/profile_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:scaleType="centerCrop" />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:alpha="0.8"
+                android:src="@drawable/edit"
+                android:tint="@android:color/white" />
 
         </RelativeLayout>
 
@@ -116,15 +124,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/follow_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@drawable/background_button_border_red"
-        android:text="@string/follow"
-        android:textColor="@color/red" />
 
     <RelativeLayout
         android:layout_width="match_parent"

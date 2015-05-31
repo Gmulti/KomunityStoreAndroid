@@ -6,15 +6,12 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Deal extends BaseResponse implements Serializable {
-
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+0200'");
+public class Deal extends BaseResponse implements Serializable, Comparable<Deal> {
 
     @SerializedName("id")
     private int id;
@@ -41,10 +38,10 @@ public class Deal extends BaseResponse implements Serializable {
     private double lng;
 
     @SerializedName("created")
-    private String created;
+    private Date created;
 
     @SerializedName("updated")
-    private String updated;
+    private Date updated;
 
     @SerializedName("user")
     private User user;
@@ -123,24 +120,20 @@ public class Deal extends BaseResponse implements Serializable {
         this.nb_users_likes = nb_users_likes;
     }
 
-    public Date getCreated() throws ParseException {
-        return sdf.parse(created);
+    public Date getCreated() {
+        return created;
     }
 
     public void setCreated(Date created) {
-        this.created = sdf.format(created);
+        this.created = created;
     }
 
-    public Date getUpdated() throws ParseException {
-        return sdf.parse(updated);
-    }
-
-    public String getStringUpdated() throws ParseException {
+    public Date getUpdated() {
         return updated;
     }
 
     public void setUpdated(Date updated) {
-        this.updated = sdf.format(updated);
+        this.updated = updated;
     }
 
     public User getUser() {
@@ -180,23 +173,32 @@ public class Deal extends BaseResponse implements Serializable {
     }
 
     public String getStringPrice() {
-        if (price == 0.0f) {
-            return "FREE";
-        } else {
-            String stringPrice = String.valueOf(price);
-            if (stringPrice.contains(".")) {
-                String[] split = stringPrice.split("\\.");
-                if (split[1].equals("0")) {
-                    stringPrice = split[0];
+        try {
+            if (price == 0.0f) {
+                return "FREE";
+            } else {
+                String stringPrice = String.valueOf(price);
+                if (stringPrice.contains(".")) {
+                    String[] split = stringPrice.split("\\.");
+                    if (split[1].equals("0")) {
+                        stringPrice = split[0];
+                    }
                 }
+                stringPrice = stringPrice + " " + getCurrency();
+                return stringPrice;
             }
-            stringPrice = stringPrice + " " + getCurrency();
-            return stringPrice;
+        } catch (Exception e) {
+            return "No price";
         }
+
     }
 
     public boolean hasUserLike(String username) {
         return users_like.contains(username);
+    }
+
+    public int getUserLikesCount() {
+        return users_like.size();
     }
 
     public void setPrice(Float price) {
@@ -245,24 +247,14 @@ public class Deal extends BaseResponse implements Serializable {
         this.lng = lng;
     }
 
-    public Date getDateUpdated() {
-        // "yyyy-MM-dd'T'HH:mm:ss'+'ZZZ"
-        String dtStart = "2015-05-03T15:20:53+0200";
-        try {
-            Date date = sdf.parse(dtStart);
-            System.out.println(date);
-            return date;
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public String getDate() throws ParseException {
+    public String getDate() {
 
         Calendar startDateTime = Calendar.getInstance();
-        startDateTime.setTime(getUpdated());
+        if (updated != null) {
+            startDateTime.setTime(updated);
+        } else {
+            startDateTime.setTime(created);
+        }
 
         Calendar endDateTime = Calendar.getInstance();
 
@@ -305,4 +297,8 @@ public class Deal extends BaseResponse implements Serializable {
         return this.getTitle();
     }
 
+    @Override
+    public int compareTo(Deal another) {
+        return getCreated().after(another.getCreated()) ? -1 : 0;
+    }
 }

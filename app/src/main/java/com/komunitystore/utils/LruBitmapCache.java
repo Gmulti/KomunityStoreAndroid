@@ -3,26 +3,25 @@ package com.komunitystore.utils;
 /**
  * Created by Tanguy on 09/05/2015.
  */
-import android.content.Context;
+
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
-import android.util.DisplayMetrics;
+
 import com.android.volley.toolbox.ImageLoader.ImageCache;
 
-public class LruBitmapCache extends LruCache<String, Bitmap>
-        implements ImageCache {
+public class LruBitmapCache extends LruCache<String, Bitmap> implements ImageCache {
 
-    public LruBitmapCache(int maxSize) {
-        super(maxSize);
+    public LruBitmapCache() {
+        this(getDefaultLruCacheSize());
     }
 
-    public LruBitmapCache(Context ctx) {
-        this(getCacheSize(ctx));
+    public LruBitmapCache(int sizeInKiloBytes) {
+        super(sizeInKiloBytes);
     }
 
     @Override
     protected int sizeOf(String key, Bitmap value) {
-        return value.getRowBytes() * value.getHeight();
+        return value.getRowBytes() * value.getHeight() / 1024;
     }
 
     @Override
@@ -35,15 +34,11 @@ public class LruBitmapCache extends LruCache<String, Bitmap>
         put(url, bitmap);
     }
 
-    // Returns a cache size equal to approximately three screens worth of images.
-    public static int getCacheSize(Context ctx) {
-        final DisplayMetrics displayMetrics = ctx.getResources().
-                getDisplayMetrics();
-        final int screenWidth = displayMetrics.widthPixels;
-        final int screenHeight = displayMetrics.heightPixels;
-        // 4 bytes per pixel
-        final int screenBytes = screenWidth * screenHeight * 4;
+    public static int getDefaultLruCacheSize() {
+        final int maxMemory =
+                (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8;
 
-        return screenBytes * 3;
+        return cacheSize;
     }
 }
