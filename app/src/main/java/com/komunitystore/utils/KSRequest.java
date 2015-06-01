@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.komunitystore.model.AccessToken;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,9 +85,15 @@ public class KSRequest extends Request {
             switch (_returnType) {
                 case OBJECT:
                 default:
-                    return Response.success(
-                            _gson.fromJson(json, _clazz),
-                            HttpHeaderParser.parseCacheHeaders(response));
+                    if (_clazz != null) {
+                        return Response.success(
+                                _gson.fromJson(json, _clazz),
+                                HttpHeaderParser.parseCacheHeaders(response));
+                    } else {
+                        return Response.success(
+                                new JSONObject(json),
+                                HttpHeaderParser.parseCacheHeaders(response));
+                    }
                 case ARRAY:
                     return Response.success(
                             new JSONArray(json),

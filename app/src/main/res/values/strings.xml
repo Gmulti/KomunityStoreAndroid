@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Komunity Store</string>
     <string name="language">en</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="hello_world">Hello world!</string>
     <string name="back_to_close">Press again to quit</string>
     <string name="action_settings">Settings</string>
@@ -24,7 +26,8 @@
     <string name="loading_title">Loading</string>
     <string name="loading_message">Please wait</string>
     <string name="success">Done</string>
-    <string name="fail_location">Couldn\'t locate you, please make sure you turned your GPS ON or you are connected</string>
+    <string name="fail_location_title">Couldn\'t locate you</string>
+    <string name="fail_location_message">Please make sure you turned your GPS ON or you are connected</string>
     <string name="posted_by">Posted By :</string>
     <string name="post_a_deal">Post a Deal</string>
     <string name="deal_title">Title *</string>
@@ -34,6 +37,8 @@
     <string name="deal_price">Price *</string>
     <string name="deal_promo_code">Promo Code *</string>
     <string name="deal_reduc">Reduction *</string>
+    <string name="deal_address">Address</string>
+    <string name="empty">Empty</string>
     <string name="fill_info_title">Some infos are missing</string>
     <string name="fill_info_message">Please fill all the fields marked with a *</string>
     <string name="deal_send_success_title">Deal successfully send</string>
@@ -43,4 +48,6 @@
     <string name="bon_plan">Good deal</string>
     <string name="code_promo">Promo Code</string>
     <string name="reduction">Reduction</string>
+    <string name="map_no_gps_title">GPS disabled</string>
+    <string name="map_no_gps_message">Do you want to enable it for better accuracy ?</string>
 </resources>

@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Komunity Store</string>
-
     <string name="language">fr</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
     <string name="hello_world">Hello world!</string>
     <string name="back_to_close">Appuyer une nouvelle fois pour quitter</string>
     <string name="action_settings">Settings</string>
@@ -25,7 +26,8 @@
     <string name="loading_title">Chargement</string>
     <string name="loading_message">Veuillez patentier</string>
     <string name="success">Chargement réussi</string>
-    <string name="fail_location">Impossible de vous géolocaliser, vérifiez que votre GPS est bien allumé ou que vous êtes connecté</string>
+    <string name="fail_location_title">Impossible de vous géolocaliser</string>
+    <string name="fail_location_message">Vérifiez que votre GPS est bien allumé ou que vous êtes connecté</string>
     <string name="posted_by">Posté par :</string>
     <string name="post_a_deal">Poster un Deal</string>
     <string name="deal_title">Titre *</string>
@@ -34,7 +36,9 @@
     <string name="deal_type">Type *</string>
     <string name="deal_price">Prix *</string>
     <string name="deal_promo_code">Code Promo *</string>
-    <string name="deal_reduc">Reduction *</string>
+    <string name="deal_reduc">Réduction *</string>
+    <string name="deal_address">Adresse</string>
+    <string name="empty">Vide</string>
     <string name="fill_info_title">Certaines informations sont manquantes</string>
     <string name="fill_info_message">Veuillez renseigner toutes les informations portant un *</string>
     <string name="deal_send_success_title">Deal envoyé avec succès</string>
@@ -44,4 +48,6 @@
     <string name="bon_plan">Bon plan</string>
     <string name="code_promo">Code Promo</string>
     <string name="reduction">Réduction</string>
+    <string name="map_no_gps_title">GPS désactivé</string>
+    <string name="map_no_gps_message">Voulez-vous activer le GPS pour plus de précision ?</string>
 </resources>

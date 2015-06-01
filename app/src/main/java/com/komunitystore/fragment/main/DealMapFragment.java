@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 /**
  * Created by G3ck0z9 on 29/05/2015.
  */
-public class DealMapFragment extends KSFragment {
+public class DealMapFragment extends KSFragment implements LocationListener {
 
     private View _rootView;
 
@@ -57,8 +58,7 @@ public class DealMapFragment extends KSFragment {
     private Map<Marker, Deal> _markers;
     private MapView _mapView;
     private GoogleMap _map;
-
-    private boolean _located = false;
+    private LocationManager _locationManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,62 +90,28 @@ public class DealMapFragment extends KSFragment {
                 }
             });
             _map.clear();
-        }
-        getLocation();
-        return _rootView;
-    }
-
-    public void getLocation() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER),
-                wifiLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (gpsLocation == null && wifiLocation == null) {
-            Crouton.makeText(getActivity(), R.string.fail_location, Style.ALERT, _mapView).show();
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    setPosition(location);
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            });
-        } else {
-            if (gpsLocation != null) {
-                setPosition(gpsLocation);
-            } else {
-                setPosition(wifiLocation);
+            _locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            if (!_locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                buildAlertMessageNoGps();
             }
+            _locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 1000, this);
+            _locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5000, this);
         }
+        return _rootView;
     }
 
     private void setPosition(Location location) {
         _latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        if (!_located) {
-            _located = true;
-            _map.moveCamera(CameraUpdateFactory.newLatLng(_latLng));
-            _map.animateCamera(CameraUpdateFactory.zoomTo(15));
-            getDeals();
-        }
+        _map.moveCamera(CameraUpdateFactory.newLatLng(_latLng));
+        _map.animateCamera(CameraUpdateFactory.zoomTo(15));
+        getDeals();
     }
 
     private void getDeals() {
         if (_latLng == null) {
             new AlertDialog.Builder(getActivity())
-                    .setTitle("")
-                    .setMessage("")
+                    .setTitle(R.string.fail_location_title)
+                    .setMessage(R.string.fail_location_message)
                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -192,6 +158,7 @@ public class DealMapFragment extends KSFragment {
     }
 
     private void showDeals() {
+        Crouton.cancelAllCroutons();
         Crouton.makeText(getActivity(), R.string.success, Style.CONFIRM, _mapView).show();
         _markers = new HashMap<>();
         Bitmap markerIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
@@ -204,6 +171,45 @@ public class DealMapFragment extends KSFragment {
                     .icon(BitmapDescriptorFactory.fromBitmap(markerIcon)));
             _markers.put(marker, deal);
         }
+    }
+
+    private void buildAlertMessageNoGps() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.map_no_gps_title)
+                .setMessage(R.string.map_no_gps_message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        setPosition(location);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 
     @Override

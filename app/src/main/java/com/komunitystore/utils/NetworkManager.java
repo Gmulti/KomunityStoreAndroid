@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.Html;
+import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,6 +24,8 @@ import com.komunitystore.model.AccessToken;
 import com.komunitystore.model.Deal;
 import com.komunitystore.model.KSErrorResponse;
 import com.komunitystore.model.User;
+
+import org.json.JSONArray;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -181,7 +185,7 @@ public class NetworkManager {
                 count++;
             }
         }
-        addToQueue(new KSRequest(Request.Method.GET, url, Deal.class, KSRequest.ReturnType.ARRAY, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+        addToQueue(new KSRequest(Request.Method.GET, url, null, KSRequest.ReturnType.ARRAY, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
     public void postDeal(Map<String, String> params, ArrayList<Bitmap> bitmaps, Response.Listener listener) {
@@ -209,6 +213,12 @@ public class NetworkManager {
     public void changeFollowUser(boolean follow, User user, Response.Listener listener, Response.ErrorListener errorListener) {
         String url = BASE_URL_API + "/users/" + user.getId() + "/" + (follow ? "follows" : "unfollows") + ".json";
         addToQueue(new KSRequest(Request.Method.POST, url, User.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void getLocationsFromAddress(String address, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = TextUtils.htmlEncode("https://maps.googleapis.com/maps/api/geocode/json?address=" + address);
+        url = url.replaceAll(" ", "%20");
+        addToQueue(new KSRequest(Request.Method.GET, url, null, KSRequest.ReturnType.OBJECT, null, listener, errorListener));
     }
 
     public void getImage(NetworkImageView image, String url) {
