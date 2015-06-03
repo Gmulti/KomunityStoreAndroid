@@ -50,6 +50,7 @@ public class NetworkManager {
     public static final String BASE_URL_API = "http://104.236.195.92/app_dev.php/api/v1";
     public static final String GET_ME = "/me.json";
     public static final String GET_DEALS = "/deals.json";
+    public static final String GET_USERS = "/users.json";
 
     private static final String NO_INTERNET_CONNECTION = "no_internet_connection";
 
@@ -57,13 +58,11 @@ public class NetworkManager {
 
     private Context _context;
 
-    private RequestQueue _queue;
-    private ImageLoader _imageLoader;
+    private KSRequestQueue _queue;
 
     private NetworkManager(Context context) {
         _context = context;
-        _queue = Volley.newRequestQueue(context);
-        _imageLoader = new ImageLoader(_queue, new LruBitmapCache());
+        _queue = new KSRequestQueue(context);
     }
 
     public static NetworkManager getInstance(Context context) {
@@ -84,8 +83,7 @@ public class NetworkManager {
                         if (error.getMessage().contains("error_description")) {
                             KSErrorResponse errorResponse = new Gson().fromJson(error.getMessage(), KSErrorResponse.class);
                             new AlertDialog.Builder(currentActivity)
-                                    .setTitle(R.string.error_title)
-                                    .setMessage(errorResponse.getError_description())
+                                    .setTitle(errorResponse.getError_description())
                                     .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -188,6 +186,34 @@ public class NetworkManager {
         addToQueue(new KSRequest(Request.Method.GET, url, null, KSRequest.ReturnType.ARRAY, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
+    public void getDeal(int id, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + "/deals/" + id + ".json";
+        addToQueue(new KSRequest(Request.Method.GET, url, Deal.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void getUsers(Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + GET_USERS;
+        if (params != null) {
+            int count = 0;
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (count == 0) {
+                    url = url + "?" + key + "=" + value;
+                } else {
+                    url = url + "&" + key + "=" + value;
+                }
+                count++;
+            }
+        }
+        addToQueue(new KSRequest(Request.Method.GET, url, null, KSRequest.ReturnType.ARRAY, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void getUser(int id, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + "/users/" + id + ".json";
+        addToQueue(new KSRequest(Request.Method.GET, url, User.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
     public void postDeal(Map<String, String> params, ArrayList<Bitmap> bitmaps, Response.Listener listener) {
         String url = BASE_URL_API + "/deals.json";
         KSMultiPartRequest request = new KSMultiPartRequest(_context, url, params, bitmaps, listener, KSSharedPreferences.getInstance(_context).getAccessToken());
@@ -205,8 +231,8 @@ public class NetworkManager {
         addToQueue(new KSRequest(Request.Method.POST, url, Deal.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
-    public void shareDeal(Deal deal, Response.Listener listener, Response.ErrorListener errorListener) {
-        String url = BASE_URL_API + "/deals/" + deal.getId() + "/shares.json";
+    public void shareDeal(boolean share, Deal deal, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + "/deals/" + deal.getId() + "/" + (share ? "shares" : "unshares") + ".json";
         addToQueue(new KSRequest(Request.Method.POST, url, Deal.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
@@ -222,6 +248,6 @@ public class NetworkManager {
     }
 
     public void getImage(NetworkImageView image, String url) {
-        image.setImageUrl(url, _imageLoader);
+        image.setImageUrl(url, _queue.getImageLoader());
     }
 }

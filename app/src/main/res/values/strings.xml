@@ -21,6 +21,11 @@
     <string name="my_profile">My Profile</string>
     <string name="no_connection_title">Connection Error</string>
     <string name="no_connection_message">Please connect to a working Internet connection and try again</string>
+    <string name="no_deal">No deal was found.\n\nFind users to follow using the search function or try the map to see the deals near you !</string>
+    <string name="choose_a_picture">Add picture</string>
+    <string name="from_galery">Choose from Gallery</string>
+    <string name="from_photo">Take a picture</string>
+    <string name="error_full">An error has occured.\nPlease try again later</string>
     <string name="error_title">An error has occured</string>
     <string name="error_message">Please try again later</string>
     <string name="loading_title">Loading</string>
@@ -30,6 +35,11 @@
     <string name="fail_location_message">Please make sure you turned your GPS ON or you are connected</string>
     <string name="posted_by">Posted By :</string>
     <string name="post_a_deal">Post a Deal</string>
+    <string name="search_content">Title / Content</string>
+    <string name="search_price">Price</string>
+    <string name="search_deal">Deal</string>
+    <string name="search_user">User</string>
+    <string name="search_no_params">You must complete at least one field</string>
     <string name="deal_title">Title *</string>
     <string name="deal_content">Content *</string>
     <string name="deal_currency">Currency *</string>

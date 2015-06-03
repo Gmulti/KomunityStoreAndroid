@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.komunitystore.R;
 import com.komunitystore.model.AccessToken;
 
 import org.apache.http.HttpResponse;
@@ -72,6 +73,7 @@ public class KSMultiPartRequest extends AsyncTask<Void, Void, String> {
         httppost.addHeader("Accept", "application/json");
         if (_accessToken != null) {
             httppost.addHeader("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
+            httppost.addHeader("Language", _context.getResources().getString(R.string.language));
         }
         try {
             MultipartEntity entity = new MultipartEntity();

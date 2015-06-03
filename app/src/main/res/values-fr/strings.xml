@@ -21,6 +21,11 @@
     <string name="my_profile">Mon Profil</string>
     <string name="no_connection_title">Aucune connexion</string>
     <string name="no_connection_message">Verifiez votre connection et réessayez</string>
+    <string name="no_deal">Aucun deal n\'a été trouvé.\n\nTrouvez des utilisateurs à suivre en utilisant la fonction Recherche ou faites un tour sur la carte pour voir les deals proches de chez vous !</string>
+    <string name="choose_a_picture">Ajouter une image</string>
+    <string name="from_galery">Depuis la galerie</string>
+    <string name="from_photo">Prendre une photo</string>
+    <string name="error_full">Une erreur est survenue.\nVeuillez réessayer plus tard</string>
     <string name="error_title">Une erreur est survenue</string>
     <string name="error_message">Veuillez réessayer plus tard</string>
     <string name="loading_title">Chargement</string>
@@ -30,6 +35,11 @@
     <string name="fail_location_message">Vérifiez que votre GPS est bien allumé ou que vous êtes connecté</string>
     <string name="posted_by">Posté par :</string>
     <string name="post_a_deal">Poster un Deal</string>
+    <string name="search_content">Titre / Description</string>
+    <string name="search_price">Prix</string>
+    <string name="search_deal">Deal</string>
+    <string name="search_user">Utilisateur</string>
+    <string name="search_no_params">Vous devez renseigner au moins un paramètre</string>
     <string name="deal_title">Titre *</string>
     <string name="deal_content">Contenu *</string>
     <string name="deal_currency">Monnaie *</string>

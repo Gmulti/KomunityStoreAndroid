@@ -250,11 +250,11 @@ public class Deal extends BaseResponse implements Serializable, Comparable<Deal>
     public String getDate() {
 
         Calendar startDateTime = Calendar.getInstance();
-        if (updated != null) {
-            startDateTime.setTime(updated);
-        } else {
+        //if (updated != null) {
+        //    startDateTime.setTime(updated);
+        //} else {
             startDateTime.setTime(created);
-        }
+        //}
 
         Calendar endDateTime = Calendar.getInstance();
 

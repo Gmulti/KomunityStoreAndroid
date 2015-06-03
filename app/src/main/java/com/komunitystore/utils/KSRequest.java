@@ -1,5 +1,7 @@
 package com.komunitystore.utils;
 
+import android.text.TextUtils;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -33,6 +35,8 @@ public class KSRequest extends Request {
     private AccessToken _accessToken;
     private ReturnType _returnType;
 
+    private String _language;
+
     public KSRequest(int method, String url, Class clazz, ReturnType returnType, Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         _listener = listener;
@@ -52,6 +56,10 @@ public class KSRequest extends Request {
         _gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
     }
 
+    public void setLanguage(String language) {
+        _language = language;
+    }
+
     @Override
     protected Map<String, String> getParams() throws AuthFailureError {
         return _params;
@@ -65,6 +73,9 @@ public class KSRequest extends Request {
             // TODO send language
             //headers.put("Language", "application/json");
             headers.put("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
+            if (!TextUtils.isEmpty(_language)) {
+                headers.put("Language", _language);
+            }
         }
         return headers;
     }

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -54,11 +55,13 @@ public class KSCheckBox extends FrameLayout {
         root.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                setSelected(true);
+                if (_listener != null) {
+                    _listener.onSelectedChanged(KSCheckBox.this, !_selected);
+                }
             }
         });
         addView(root);
-        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics()))));
     }
 
     public void setColors(int selectedColor, int unselectedColor) {
@@ -82,9 +85,6 @@ public class KSCheckBox extends FrameLayout {
     public void setSelected(boolean selected) {
         _selected = selected;
         _selector.setBackgroundColor(_selected ? getResources().getColor(_selectedColor) : getResources().getColor(_unselectedColor));
-        if (_listener != null) {
-            _listener.onSelectedChanged(this, selected);
-        }
     }
 
     public boolean isSelected() {

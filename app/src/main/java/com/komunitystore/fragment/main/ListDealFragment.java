@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -39,6 +41,7 @@ import com.komunitystore.view.KSSearchView;
 import org.json.JSONArray;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +59,7 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
     private ListView _list;
     private DealAdapter _adapter;
     private KSSearchView _search;
+    private TextView _noDeal;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,7 +76,7 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
             _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    launchActivity(DealDetailsFragment.class, Singleton.getInstance().getDeals().get(position - 1));
+                    launchActivity(DealDetailsFragment.class, Singleton.getInstance().getDeals().get(position - 1).getId());
                 }
             });
             _swipe = (SwipeRefreshLayout) _rootView.findViewById(R.id.swipe);
@@ -83,9 +87,10 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
                     getDeals();
                 }
             });
+            _noDeal = (TextView) _rootView.findViewById(R.id.no_deal);
         }
         if (Singleton.getInstance().getDeals() != null) {
-            if (_adapter == null || _adapter.getCount() == 0) {
+            if (_adapter != null || _adapter.getCount() > 0) {
                 showDeals();
             }
         } else {
@@ -119,12 +124,17 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
     }
 
     private void showDeals() {
+
         _swipe.setRefreshing(false);
         _adapter = new DealAdapter(getActivity(), Singleton.getInstance().getDeals(), DealAdapter.Type.FULL);
         _list.setAdapter(_adapter);
+        if (_adapter.getCount() == 0) {
+            _noDeal.setVisibility(View.VISIBLE);
+        }
     }
 
     private void getDeals() {
+        _noDeal.setVisibility(View.GONE);
         _swipe.post(new Runnable() {
             @Override
             public void run() {
@@ -133,6 +143,14 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
         });
         Map<String, String> params = new HashMap<>();
         params.put("limit", "30");
+        if (_adapter != null && _adapter.getItem(0) != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
+            String dateOffset = sdf.format(_adapter.getItem(0).getCreated());
+            if (!TextUtils.isEmpty(dateOffset)) {
+                dateOffset = dateOffset.replaceAll(" ", "%20");
+                params.put("date_offset", dateOffset);
+            }
+        }
         NetworkManager.getInstance(getActivity()).getDeals(params,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -148,17 +166,20 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         _swipe.setRefreshing(false);
+                        if (isAdded()) {
+                            showDeals();
+                        }
                     }
                 });
     }
 
-    private void launchActivity(Class clazz, Serializable object) {
+    private void launchActivity(Class clazz, int id) {
         Intent intent = new Intent(getActivity(), SecondaryActivity.class);
         intent.putExtra(SecondaryActivity.EXTRA_FRAGMENT, clazz.getName());
         if (clazz == DealDetailsFragment.class) {
-            intent.putExtra(SecondaryActivity.EXTRA_DEAL, object);
+            intent.putExtra(SecondaryActivity.EXTRA_DEAL, id);
         } else if (clazz == UserFragment.class) {
-            intent.putExtra(SecondaryActivity.EXTRA_USER, object);
+            intent.putExtra(SecondaryActivity.EXTRA_USER, id);
         }
         getActivity().startActivity(intent);
         getActivity().overridePendingTransition(R.anim.activity_from_left, R.anim.activity_to_right);
@@ -176,12 +197,7 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
 
     @Override
     public KSActionBarButton getLeftButton() {
-        return new KSActionBarButton(R.drawable.logout, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        return null;
     }
 
     @Override

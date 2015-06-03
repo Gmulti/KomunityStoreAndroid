@@ -18,9 +18,21 @@
             android:overScrollMode="never"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:scrollbars="none"
-            />
+            android:scrollbars="none" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/no_deal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="30dp"
+        android:gravity="center"
+        android:text="@string/no_deal"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -113,6 +113,8 @@ public class MainFragment extends KSFragment {
         EventBus.getDefault().unregister(this);
     }
 
+
+
     @Override
     public boolean shouldDisplayActionBar() {
         return false;

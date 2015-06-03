@@ -31,6 +31,7 @@ import com.komunitystore.R;
 import com.komunitystore.activity.SecondaryActivity;
 import com.komunitystore.fragment.KSFragment;
 import com.komunitystore.fragment.secondary.DealDetailsFragment;
+import com.komunitystore.fragment.secondary.PostDealFragment;
 import com.komunitystore.model.Deal;
 import com.komunitystore.utils.KSEvent;
 import com.komunitystore.utils.NetworkManager;
@@ -83,7 +84,7 @@ public class DealMapFragment extends KSFragment implements LocationListener {
                     if (deal != null) {
                         Intent intent = new Intent(getActivity(), SecondaryActivity.class);
                         intent.putExtra(SecondaryActivity.EXTRA_FRAGMENT, DealDetailsFragment.class.getName());
-                        intent.putExtra(SecondaryActivity.EXTRA_DEAL, deal);
+                        intent.putExtra(SecondaryActivity.EXTRA_DEAL, deal.getId());
                         getActivity().startActivity(intent);
                         getActivity().overridePendingTransition(R.anim.activity_from_left, R.anim.activity_to_right);
                     }
@@ -141,7 +142,7 @@ public class DealMapFragment extends KSFragment implements LocationListener {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    Crouton.cancelAllCroutons();
                 }
             });
         }
@@ -251,7 +252,15 @@ public class DealMapFragment extends KSFragment implements LocationListener {
 
     @Override
     public KSActionBarButton getRightButton2() {
-        return null;
+        return new KSActionBarButton(R.drawable.add, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SecondaryActivity.class);
+                intent.putExtra(SecondaryActivity.EXTRA_FRAGMENT, PostDealFragment.class.getName());
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.activity_from_bottom, R.anim.activity_fade_out);
+            }
+        });
     }
 
     @Override

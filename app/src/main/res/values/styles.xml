@@ -12,7 +12,5 @@
     </style>
 
     <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/activity_from_bottom</item>
-        <item name="android:windowExitAnimation">@anim/activity_to_bottom</item>
     </style>
 </resources>

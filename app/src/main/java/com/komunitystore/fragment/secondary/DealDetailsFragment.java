@@ -29,6 +29,7 @@ import com.melnykov.fab.FloatingActionButton;
  */
 public class DealDetailsFragment extends KSFragment {
 
+    private int _dealId = -1;
     private Deal _deal;
 
     private ImageView _likeImage;
@@ -44,7 +45,7 @@ public class DealDetailsFragment extends KSFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            _deal = (Deal) bundle.getSerializable(SecondaryActivity.EXTRA_DEAL);
+            _dealId = bundle.getInt(SecondaryActivity.EXTRA_DEAL);
         }
         View root = View.inflate(getActivity(), R.layout.fragment_deal_details, null);
         _profileImage = (NetworkImageView) root.findViewById(R.id.profile_image);
@@ -59,8 +60,25 @@ public class DealDetailsFragment extends KSFragment {
         _likeCount = (TextView) root.findViewById(R.id.like_count);
         _likeImage = (ImageView) root.findViewById(R.id.like_image);
         _go = (FloatingActionButton) root.findViewById(R.id.fab);
-        configureView();
+        getDeal();
         return root;
+    }
+
+    private void getDeal() {
+        final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getText(R.string.loading_title), getResources().getText(R.string.loading_message));
+        NetworkManager.getInstance(getActivity()).getDeal(_dealId, new Response.Listener<Deal>() {
+            @Override
+            public void onResponse(Deal response) {
+                progress.dismiss();
+                _deal = response;
+                configureView();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progress.dismiss();
+            }
+        });
     }
 
     private void configureView() {
@@ -100,8 +118,7 @@ public class DealDetailsFragment extends KSFragment {
                         public void onResponse(Deal response) {
                             progress.dismiss();
                             _deal = response;
-                            Singleton.getInstance().replaceDeal(_deal);
-                            configureView();
+                            getDeal();
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -125,7 +142,7 @@ public class DealDetailsFragment extends KSFragment {
                         public void onResponse(Deal response) {
                             progress.dismiss();
                             _deal = response;
-                            configureView();
+                            getDeal();
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -140,23 +157,45 @@ public class DealDetailsFragment extends KSFragment {
         if (_deal.isShared()) {
             _share.setBackgroundResource(R.drawable.background_button_red);
             _share.setColorFilter(getResources().getColor(android.R.color.white));
-            _share.setOnClickListener(null);
+            _share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
+                    NetworkManager.getInstance(getActivity()).shareDeal(false, _deal, new Response.Listener<Deal>() {
+                        @Override
+                        public void onResponse(Deal response) {
+                            progress.dismiss();
+                            _deal = response;
+                            getDeal();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                            progress.dismiss();
+                        }
+                    });
+                }
+            });
         } else {
             _share.setBackgroundResource(R.drawable.background_button_border_red);
             _share.setColorFilter(getResources().getColor(R.color.red));
             _share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    NetworkManager.getInstance(getActivity()).shareDeal(_deal, new Response.Listener<Deal>() {
+                    final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
+                    NetworkManager.getInstance(getActivity()).shareDeal(true, _deal, new Response.Listener<Deal>() {
                         @Override
                         public void onResponse(Deal response) {
+                            progress.dismiss();
                             _deal = response;
-                            configureView();
+                            getDeal();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             error.printStackTrace();
+                            progress.dismiss();
                         }
                     });
                 }

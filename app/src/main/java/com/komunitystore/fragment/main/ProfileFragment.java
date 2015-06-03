@@ -31,6 +31,7 @@ import com.komunitystore.activity.MainActivity;
 import com.komunitystore.activity.SecondaryActivity;
 import com.komunitystore.adapter.DealAdapter;
 import com.komunitystore.fragment.KSFragment;
+import com.komunitystore.fragment.secondary.PostDealFragment;
 import com.komunitystore.model.Deal;
 import com.komunitystore.model.User;
 import com.komunitystore.utils.KSEvent;
@@ -42,6 +43,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +56,7 @@ import de.greenrobot.event.EventBus;
  */
 public class ProfileFragment extends KSFragment {
 
-    public static final int REQUEST_IMAGE_CAPTURE = 1;
+    public static final int REQUEST_IMAGE_CAPTURE = 1, REQUEST_IMAGE_GALLERY = 2;
 
     public String _imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp_profile_image.jpg";
 
@@ -105,6 +108,7 @@ public class ProfileFragment extends KSFragment {
         _profileName.setText(_user.getUsername());
         _followers.setText(String.valueOf(_user.getNb_followers()));
         _subscribers.setText(String.valueOf(_user.getNb_subscribes()));
+        _profileImage.setImageBitmap(null);
         _deals.setText(String.valueOf(_user.getNb_deals()));
         if (_user.getMedia_profile() != null && _user.getMedia_profile().getThumbnails_url() != null) {
             String imgUrl = _user.getMedia_profile().getThumbnails_url().getUser_profile_tile_large();
@@ -117,11 +121,27 @@ public class ProfileFragment extends KSFragment {
     }
 
     private void takePicture() {
-        File img = new File(_imagePath);
-        Uri uri = Uri.fromFile(img);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.take_photo)
+                .setPositiveButton(R.string.from_galery, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                        photoPickerIntent.setType("image/*");
+                        startActivityForResult(photoPickerIntent, REQUEST_IMAGE_GALLERY);
+                    }
+                })
+                .setNegativeButton(R.string.from_photo, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        File img = new File(_imagePath);
+                        Uri uri = Uri.fromFile(img);
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                    }
+                })
+                .create().show();
     }
 
     public void uploadNewImage(Bitmap bitmap) {
@@ -134,16 +154,9 @@ public class ProfileFragment extends KSFragment {
                     progress.dismiss();
                     try {
                         JSONObject json = new JSONObject(response);
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle(R.string.user_image_successfully_change)
-                                .setMessage(null)
-                                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .create().show();
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+                        _user = gson.fromJson(json.toString(), User.class);
+                        configureView();
                     } catch (Exception e) {
                         e.printStackTrace();
                         new AlertDialog.Builder(getActivity())
@@ -178,6 +191,17 @@ public class ProfileFragment extends KSFragment {
             if (resultCode == Activity.RESULT_OK) {
                 Bitmap bmp = BitmapFactory.decodeFile(_imagePath);
                 uploadNewImage(bmp);
+            }
+        } else if (requestCode == REQUEST_IMAGE_GALLERY) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+                try {
+                    InputStream imageStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                    Bitmap bmp = BitmapFactory.decodeStream(imageStream);
+                    uploadNewImage(bmp);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -245,17 +269,21 @@ public class ProfileFragment extends KSFragment {
 
     @Override
     public KSActionBarButton getLeftButton() {
-        return new KSActionBarButton(R.drawable.logout, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        return null;
     }
 
     @Override
     public KSActionBarButton getRightButton1() {
-        return null;
+
+        return new KSActionBarButton(R.drawable.add, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SecondaryActivity.class);
+                intent.putExtra(SecondaryActivity.EXTRA_FRAGMENT, PostDealFragment.class.getName());
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.activity_from_bottom, R.anim.activity_fade_out);
+            }
+        });
     }
 
     @Override

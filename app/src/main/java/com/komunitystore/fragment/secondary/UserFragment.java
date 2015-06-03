@@ -1,5 +1,6 @@
 package com.komunitystore.fragment.secondary;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.komunitystore.fragment.KSFragment;
 import com.komunitystore.model.Deal;
 import com.komunitystore.model.User;
 import com.komunitystore.utils.NetworkManager;
+import com.komunitystore.utils.Singleton;
 import com.komunitystore.view.KSActionBarButton;
 
 import org.json.JSONArray;
@@ -35,6 +37,7 @@ import java.util.Map;
  */
 public class UserFragment extends KSFragment {
 
+    private int _userId;
     private User _user;
 
     private ArrayList<Deal> _userDeals;
@@ -50,7 +53,7 @@ public class UserFragment extends KSFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            _user = (User) bundle.getSerializable(SecondaryActivity.EXTRA_USER);
+            _userId = bundle.getInt(SecondaryActivity.EXTRA_USER);
         }
         View root = View.inflate(getActivity(), R.layout.fragment_user, null);
         _profileImage = (NetworkImageView) root.findViewById(R.id.profile_image);
@@ -61,8 +64,25 @@ public class UserFragment extends KSFragment {
         _follow = (Button) root.findViewById(R.id.follow_button);
         _progress = (ProgressBar) root.findViewById(R.id.progress);
         _list = (ListView) root.findViewById(R.id.list);
-        configureView();
+        getUser();
         return root;
+    }
+
+    private void getUser() {
+        final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getText(R.string.loading_title), getResources().getText(R.string.loading_message));
+        NetworkManager.getInstance(getActivity()).getUser(_userId, new Response.Listener<User>() {
+            @Override
+            public void onResponse(User response) {
+                progress.dismiss();
+                _user = response;
+                configureView();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progress.dismiss();
+            }
+        });
     }
 
     private void configureView() {
@@ -70,53 +90,64 @@ public class UserFragment extends KSFragment {
         _followers.setText(String.valueOf(_user.getNb_followers()));
         _subscribers.setText(String.valueOf(_user.getNb_subscribes()));
         _deals.setText(String.valueOf(_user.getNb_deals()));
-        if (_user.isFollowed()) {
-            _follow.setText(R.string.followed);
-            _follow.setBackgroundResource(R.drawable.background_button_red);
-            _follow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    NetworkManager.getInstance(getActivity()).changeFollowUser(false, _user, new Response.Listener<User>() {
-                        @Override
-                        public void onResponse(User response) {
-                            _user = response;
-                            configureView();
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
-                        }
-                    });
-                }
-            });
+        if (_user.getId() == Singleton.getInstance().getCurrentUser().getId()) {
+            _follow.setVisibility(View.GONE);
         } else {
-            _follow.setText(R.string.follow);
-            _follow.setBackgroundResource(R.drawable.background_button_border_red);
-            _follow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    NetworkManager.getInstance(getActivity()).changeFollowUser(true, _user, new Response.Listener<User>() {
-                        @Override
-                        public void onResponse(User response) {
-                            _user = response;
-                            configureView();
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
-                        }
-                    });
-                }
-            });
+            _follow.setVisibility(View.VISIBLE);
+            if (_user.isFollowed()) {
+                _follow.setText(R.string.followed);
+                _follow.setTextColor(getResources().getColor(android.R.color.white));
+                _follow.setBackgroundResource(R.drawable.background_button_red);
+                _follow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
+                        NetworkManager.getInstance(getActivity()).changeFollowUser(false, _user, new Response.Listener<User>() {
+                            @Override
+                            public void onResponse(User response) {
+                                progress.dismiss();
+                                _user = response;
+                                getUser();
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                                progress.dismiss();
+                            }
+                        });
+                    }
+                });
+            } else {
+                _follow.setText(R.string.follow);
+                _follow.setTextColor(getResources().getColor(R.color.red));
+                _follow.setBackgroundResource(R.drawable.background_button_border_red);
+                _follow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
+                        NetworkManager.getInstance(getActivity()).changeFollowUser(true, _user, new Response.Listener<User>() {
+                            @Override
+                            public void onResponse(User response) {
+                                progress.dismiss();
+                                _user = response;
+                                getUser();
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                                progress.dismiss();
+                            }
+                        });
+                    }
+                });
+            }
         }
         if (_user.getMedia_profile() != null && _user.getMedia_profile().getThumbnails_url() != null) {
             String imgUrl = _user.getMedia_profile().getThumbnails_url().getUser_profile_tile_large();
             if (!TextUtils.isEmpty(imgUrl)) {
                 NetworkManager.getInstance(getActivity()).getImage(_profileImage, imgUrl);
-            } else {
-                _profileImage.setImageResource(R.drawable.no_image);
             }
         }
         getUserDeals();
@@ -124,13 +155,15 @@ public class UserFragment extends KSFragment {
 
     private void getUserDeals() {
         _progress.setVisibility(View.VISIBLE);
+        _list.setVisibility(View.GONE);
         Map<String, String> params = new HashMap<>();
         params.put("user_id", String.valueOf(_user.getId()));
         NetworkManager.getInstance(getActivity()).getDeals(params, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 _progress.setVisibility(View.GONE);
-                Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'+0200'").create();
+                _list.setVisibility(View.VISIBLE);
+                Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
                 _userDeals = new ArrayList<Deal>();
                 for (int i = 0; i < response.length(); i++) {
                     _userDeals.add(gson.fromJson(response.optJSONObject(i).toString(), Deal.class));
@@ -141,6 +174,7 @@ public class UserFragment extends KSFragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
                 _progress.setVisibility(View.GONE);
             }
         });

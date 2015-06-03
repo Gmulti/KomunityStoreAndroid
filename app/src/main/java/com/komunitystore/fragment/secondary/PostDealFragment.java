@@ -10,6 +10,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -50,8 +54,10 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +67,7 @@ import java.util.Map;
  */
 public class PostDealFragment extends KSFragment implements CompoundButton.OnCheckedChangeListener, KSCheckBox.OnSelectedChangeListener {
 
-    public static final int REQUEST_IMAGE_CAPTURE = 1;
+    public static final int REQUEST_IMAGE_CAPTURE = 1, REQUEST_IMAGE_GALLERY = 2;
 
     public String _imagePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/tmp_image.jpg";
 
@@ -177,11 +183,11 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
                     params.put("currency", _currencyEuros.isChecked() ? "euro" : "dollar");
                 }
             }
+            params.put("type", type);
             if (_dealPosition != null) {
                 params.put("lat", String.valueOf(_dealPosition.latitude));
                 params.put("lng", String.valueOf(_dealPosition.longitude));
             }
-            params.put("type", type);
             ArrayList<Bitmap> images = new ArrayList<>();
             images.add(_dealImage);
             final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
@@ -220,8 +226,55 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
     }
 
     private void findAddress() {
-        FindAddressDialog dialog = new FindAddressDialog(getActivity());
-        dialog.setOnLocationChoosedListener(new FindAddressDialog.OnLocationChoosedListener() {
+        /*new AlertDialog.Builder(getActivity())
+                .setPositiveButton("Here", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        final LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (location != null) {
+                            _dealPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                        } else {
+                            final ProgressDialog progress = ProgressDialog.show(getActivity(), null, getResources().getText(R.string.loading_message));
+                            progress.setCancelable(false);
+                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+                                @Override
+                                public void onLocationChanged(Location location) {
+                                    _dealPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                                    locationManager.removeUpdates(this);
+                                    progress.dismiss();
+
+                                }
+
+                                @Override
+                                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                                }
+
+                                @Override
+                                public void onProviderEnabled(String provider) {
+
+                                }
+
+                                @Override
+                                public void onProviderDisabled(String provider) {
+
+                                }
+                            });
+                        }
+                    }
+                })
+                .setNegativeButton("Search an address", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
+                    }
+                })
+                .create().show();*/
+        FindAddressDialog findAddressDialog = new FindAddressDialog(getActivity());
+        findAddressDialog.setOnLocationChoosedListener(new FindAddressDialog.OnLocationChoosedListener() {
             @Override
             public void onLocationChoosed(LatLng latlng, String display) {
                 _address.setText(display);
@@ -242,15 +295,31 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
                         .create().show();
             }
         });
-        dialog.show();
+        findAddressDialog.show();
     }
 
     private void takePicture() {
-        File img = new File(_imagePath);
-        Uri uri = Uri.fromFile(img);
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.take_photo)
+                .setPositiveButton(R.string.from_galery, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                        photoPickerIntent.setType("image/*");
+                        startActivityForResult(photoPickerIntent, REQUEST_IMAGE_GALLERY);
+                    }
+                })
+                .setNegativeButton(R.string.from_photo, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        File img = new File(_imagePath);
+                        Uri uri = Uri.fromFile(img);
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                    }
+                })
+                .create().show();
     }
 
     public void showPhoto(Bitmap bitmap) {
@@ -261,13 +330,15 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
         }
     }
 
-    private Bitmap reduceBitmapSize(Bitmap bitmap) {
-        if (bitmap.getHeight() >= 2048 || bitmap.getWidth() >= 2048) {
-            int width = new Double(bitmap.getWidth() / 1.5).intValue();
-            int height = new Double(bitmap.getHeight() / 1.5).intValue();
-            bitmap = reduceBitmapSize(Bitmap.createScaledBitmap(bitmap, width, height, true));
+    private Bitmap reduceBitmapSize(Bitmap oldBitmap) {
+        if (oldBitmap.getHeight() >= 2048 || oldBitmap.getWidth() >= 2048) {
+            int width = new Double(oldBitmap.getWidth() / 1.5).intValue();
+            int height = new Double(oldBitmap.getHeight() / 1.5).intValue();
+            Bitmap bitmap = reduceBitmapSize(Bitmap.createScaledBitmap(oldBitmap, width, height, true));
+            oldBitmap.recycle();
+            return bitmap;
         }
-        return bitmap;
+        return oldBitmap;
     }
 
     private void showFillInfoDialog() {
@@ -290,6 +361,17 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
             if (resultCode == Activity.RESULT_OK) {
                 Bitmap bmp = BitmapFactory.decodeFile(_imagePath);
                 showPhoto(bmp);
+            }
+        } else if (requestCode == REQUEST_IMAGE_GALLERY) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+                try {
+                    InputStream imageStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                    Bitmap bmp = BitmapFactory.decodeStream(imageStream);
+                    showPhoto(bmp);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -342,25 +424,29 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
 
     @Override
     public void onSelectedChanged(KSCheckBox checkBox, boolean selected) {
-        if (selected) {
+        if (selected && checkBox.isSelected() != selected) {
             if (checkBox.equals(_typeBonPlan)) {
+                _typeBonPlan.setSelected(selected);
                 _typeBonPlanLayout.setVisibility(View.VISIBLE);
                 _typeReductionLayout.setVisibility(View.GONE);
                 _typePromoLayout.setVisibility(View.GONE);
                 _typePromo.setSelected(false);
                 _typeReduction.setSelected(false);
             } else if (checkBox.equals(_typePromo)) {
+                _typePromo.setSelected(selected);
                 _typeBonPlanLayout.setVisibility(View.GONE);
                 _typeReductionLayout.setVisibility(View.GONE);
                 _typePromoLayout.setVisibility(View.VISIBLE);
                 _typeBonPlan.setSelected(false);
                 _typeReduction.setSelected(false);
             } else if (checkBox.equals(_typeReduction)) {
+                _typeReduction.setSelected(selected);
                 _typeBonPlanLayout.setVisibility(View.GONE);
                 _typeReductionLayout.setVisibility(View.VISIBLE);
                 _typePromoLayout.setVisibility(View.GONE);
                 _typeBonPlan.setSelected(false);
                 _typePromo.setSelected(false);
+
             }
         }
     }

@@ -50,11 +50,6 @@
 
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey" />
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,6 +59,7 @@
                     android:id="@+id/deal_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/separator"
                     android:orientation="vertical">
 
                     <TextView
@@ -106,6 +102,19 @@
 
                 </LinearLayout>
 
+                <View
+                    android:id="@+id/separator"
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@+id/user_layout"
+                    android:layout_alignTop="@+id/user_layout"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toLeftOf="@+id/user_layout"
+                    android:background="@color/grey" />
+
                 <LinearLayout
                     android:id="@+id/user_layout"
                     android:layout_width="wrap_content"
@@ -113,7 +122,8 @@
                     android:layout_alignBottom="@+id/deal_layout"
                     android:layout_alignParentRight="true"
                     android:background="@android:color/white"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="5dp">
 
                     <RelativeLayout
                         android:layout_width="wrap_content"

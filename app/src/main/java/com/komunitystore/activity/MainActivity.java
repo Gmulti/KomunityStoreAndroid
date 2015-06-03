@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.komunitystore.KSApp;
@@ -13,7 +14,9 @@ import com.komunitystore.fragment.main.ListDealFragment;
 import com.komunitystore.fragment.main.MainFragment;
 import com.komunitystore.fragment.main.DealMapFragment;
 import com.komunitystore.fragment.main.ProfileFragment;
+import com.komunitystore.utils.ColorUtils;
 import com.komunitystore.utils.KSEvent;
+import com.komunitystore.utils.Singleton;
 import com.komunitystore.view.KSActionBar;
 import com.komunitystore.view.KSSearchView;
 import com.komunitystore.view.KSTabbar;
@@ -45,21 +48,18 @@ public class MainActivity extends FragmentActivity implements KSFragment.OnAttac
         _tabbar.setLeftButton(new KSTabbarButton(R.drawable.map, "Map", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _search.expandWithoutAnimation(false);
                 showFragment(_mapFragment);
             }
         }));
         _tabbar.setMiddleButton(new KSTabbarButton(R.drawable.list, "List", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _search.expandWithoutAnimation(false);
                 showFragment(_listDealFragmet);
             }
         }));
         _tabbar.setRightButton(new KSTabbarButton(R.drawable.profile, "Profile", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _search.expandWithoutAnimation(false);
                 showFragment(_profileFragment);
             }
         }));
@@ -73,6 +73,20 @@ public class MainActivity extends FragmentActivity implements KSFragment.OnAttac
     }
 
     private void showFragment(KSFragment fragment) {
+        _search.expandWithoutAnimation(false);
+        _search.setOnSearchViewAnimatedListener(null);
+        ImageButton rightButton1 = _actionBar.getRightButton1();
+        rightButton1.setColorFilter(getResources().getColor(android.R.color.white));
+        rightButton1.setBackgroundColor(getResources().getColor(R.color.red));
+        rightButton1.setRotation(0);
+        ImageButton rightButton2 = _actionBar.getRightButton2();
+        rightButton2.setColorFilter(getResources().getColor(android.R.color.white));
+        rightButton2.setBackgroundColor(getResources().getColor(R.color.red));
+        rightButton2.setRotation(0);
+        ImageButton leftButton = _actionBar.getLeftButton();
+        leftButton.setColorFilter(getResources().getColor(android.R.color.white));
+        leftButton.setBackgroundColor(getResources().getColor(R.color.red));
+        leftButton.setRotation(0);
         if (getSupportFragmentManager().findFragmentById(R.id.container) == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
         } else if (getSupportFragmentManager().findFragmentById(R.id.container).getClass() != fragment.getClass()) {
@@ -122,6 +136,7 @@ public class MainActivity extends FragmentActivity implements KSFragment.OnAttac
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Singleton.getInstance().destroy();
         ((KSApp) getApplication()).setCurrentActivity(null);
     }
 

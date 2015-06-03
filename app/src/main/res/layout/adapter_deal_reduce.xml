@@ -5,13 +5,14 @@
     android:layout_height="100dp"
     android:background="@android:color/white"
     android:clickable="false"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="2dp">
 
     <RelativeLayout
         android:id="@+id/go_to_profile"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:background="@color/grey">
+        android:background="@android:color/white">
 
         <ImageView
             android:layout_width="match_parent"
@@ -23,7 +24,6 @@
             android:id="@+id/deal_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="2dp"
             android:scaleType="centerCrop" />
 
     </RelativeLayout>
@@ -32,8 +32,8 @@
         android:id="@+id/deal_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/title"
