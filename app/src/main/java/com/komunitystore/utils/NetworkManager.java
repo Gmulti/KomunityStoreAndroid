@@ -37,17 +37,31 @@ import java.util.Map;
  */
 public class NetworkManager {
 
-    public static final String BASE_URL = "http://104.236.195.92";
+    //PREPROD
+    //public static final String BASE_URL = "http://104.236.195.92";
+    //PROD
+    public static final String BASE_URL = "http://api.komunitystore.com";
     public static final String POST_TOKEN = "/token";
 
-    public static final String CLIENT_ID = "317b47172";
+    //PREPROD
+    //public static final String CLIENT_ID = "317b47172";
+    //PROD
+    public static final String CLIENT_ID = "29e111d0c00";
     public static final String GRANT_TYPE = "password";
     public static final String SCOPE = "public";
-    public static final String CLIENT_SECRET = "jsz8bll8p6o0ocww8ssg4ccwcoowcw8";
-
-    public static final String BASE_URL_PUBLIC = "http://104.236.195.92/api/public";
+    //PREPROD
+    //public static final String CLIENT_SECRET = "jsz8bll8p6o0ocww8ssg4ccwcoowcw8";
+    //PROD
+    public static final String CLIENT_SECRET = "qu9dh27h68gcwg80sso4okccoc088cw";
+    //PREPROD
+    //public static final String BASE_URL_PUBLIC = "http://104.236.195.92/api/public";
+    //PROD
+    public static final String BASE_URL_PUBLIC = "http://api.komunitystore.com/api/public";
     public static final String POST_REGISTER = "/users/register.json";
-    public static final String BASE_URL_API = "http://104.236.195.92/app_dev.php/api/v1";
+    //PREPROD
+    //public static final String BASE_URL_API = "http://104.236.195.92/app_dev.php/api/v1";
+    //PROD
+    public static final String BASE_URL_API = "http://api.komunitystore.com/api/v1";
     public static final String GET_ME = "/me.json";
     public static final String GET_DEALS = "/deals.json";
     public static final String GET_USERS = "/users.json";

@@ -2,59 +2,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layout_gravity="center"
+    android:background="@android:color/white"
     android:gravity="center"
-    android:background="@android:color/white">
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:imeOptions="actionNext"
-        android:singleLine="true"
+        android:background="@drawable/background_edit_text"
         android:gravity="center"
-        android:padding="10dp"
         android:hint="@string/username"
-        android:text="test"
+        android:imeOptions="actionNext"
+        android:padding="10dp"
+        android:singleLine="true"
         android:textColor="@color/red"
-        android:textStyle="bold"
-        android:background="@drawable/background_edit_text"/>
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:background="@drawable/background_edit_text"
+        android:gravity="center"
+        android:hint="@string/password"
         android:imeOptions="actionGo"
         android:inputType="textPassword"
-        android:singleLine="true"
-        android:gravity="center"
         android:padding="10dp"
-        android:hint="@string/password"
-        android:text="test"
+        android:singleLine="true"
         android:textColor="@color/red"
-        android:textStyle="bold"
-        android:background="@drawable/background_edit_text"/>
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:background="@drawable/background_button_red"
         android:text="@string/login"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:background="@drawable/background_button_red"/>
+        android:textStyle="bold" />
 
 </LinearLayout>
