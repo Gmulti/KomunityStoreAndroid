@@ -68,6 +68,20 @@ public class DealAdapter extends ArrayAdapter<Deal> {
             holder.message.setText(deal.getContent());
             holder.username.setText(deal.getUser().getUsername());
             holder.geoloc.setVisibility(deal.isGeoloc() ? View.VISIBLE : View.GONE);
+            if (deal.getType().equals("bon-plan")) {
+                holder.dealType.setText(R.string.bon_plan);
+                holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
+            } else if (deal.getType().equals("reduction")) {
+                holder.dealType.setText(R.string.reduction);
+                if (deal.getType_view().getSub_type().equals("cash")) {
+                    holder.key.setText(deal.getType_view().getInfos_view() + " %");
+                } else {
+                    holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
+                }
+            } else if (deal.getType().equals("code-promo")) {
+                holder.dealType.setText(R.string.code_promo);
+                holder.key.setText(deal.getType_view().getInfos_view());
+            }
             holder.price.setText(deal.getStringPrice());
             if (deal.getMedias().size() > 0 && deal.getMedias().get(0).getThumbnails_url() != null && !TextUtils.isEmpty(deal.getMedias().get(0).getThumbnails_url().getImage_deal_large())) {
                 holder.dealImage.setVisibility(View.VISIBLE);
@@ -108,14 +122,24 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                     activity.overridePendingTransition(R.anim.activity_from_left, R.anim.activity_to_right);
                 }
             });
-            holder.title = (TextView) convertView.findViewById(R.id.title);
-            holder.message = (TextView) convertView.findViewById(R.id.message);
-            holder.price = (TextView) convertView.findViewById(R.id.price);
-            holder.dealImage = (NetworkImageView) convertView.findViewById(R.id.deal_image);
             Spannable span = new SpannableString(deal.getTitle() + "  - " + deal.getDate());
             span.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.date_grey)), deal.getTitle().length(), span.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.title.setText(span);
             holder.message.setText(deal.getContent());
+            if (deal.getType().equals("bon-plan")) {
+                holder.dealType.setText(R.string.bon_plan);
+                holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
+            } else if (deal.getType().equals("reduction")) {
+                holder.dealType.setText(R.string.reduction);
+                if (deal.getType_view().getSub_type().equals("cash")) {
+                    holder.key.setText(deal.getType_view().getInfos_view() + " %");
+                } else {
+                    holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
+                }
+            } else if (deal.getType().equals("code-promo")) {
+                holder.dealType.setText(R.string.code_promo);
+                holder.key.setText(deal.getType_view().getInfos_view());
+            }
             holder.price.setText(deal.getStringPrice());
             if (deal.getMedias().size() > 0 && deal.getMedias().get(0).getThumbnails_url() != null && !TextUtils.isEmpty(deal.getMedias().get(0).getThumbnails_url().getImage_deal_large())) {
                 holder.dealImage.setVisibility(View.VISIBLE);
@@ -164,7 +188,7 @@ public class DealAdapter extends ArrayAdapter<Deal> {
     private class DealHolder {
 
         private LinearLayout userLayout;
-        public TextView title, message, username, price;
+        public TextView title, message, username, price, dealType, key;
         public NetworkImageView userImage, dealImage;
         public ImageView geoloc;
         public String dealImageUrl, userImageUrl;
@@ -175,6 +199,8 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                 message = (TextView) v.findViewById(R.id.message);
                 username = (TextView) v.findViewById(R.id.username);
                 price = (TextView) v.findViewById(R.id.price);
+                dealType = (TextView) v.findViewById(R.id.type);
+                key = (TextView) v.findViewById(R.id.key);
                 userLayout = (LinearLayout) v.findViewById(R.id.user_layout);
                 dealImage = (NetworkImageView) v.findViewById(R.id.deal_image);
                 userImage = (NetworkImageView) v.findViewById(R.id.profile_image);
@@ -184,6 +210,8 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                 message = (TextView) v.findViewById(R.id.message);
                 price = (TextView) v.findViewById(R.id.price);
                 dealImage = (NetworkImageView) v.findViewById(R.id.deal_image);
+                dealType = (TextView) v.findViewById(R.id.type);
+                key = (TextView) v.findViewById(R.id.key);
             }
             v.setTag(this);
         }

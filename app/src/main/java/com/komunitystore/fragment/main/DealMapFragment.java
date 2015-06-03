@@ -123,28 +123,30 @@ public class DealMapFragment extends KSFragment implements LocationListener {
         } else {
             _map.clear();
             Crouton.cancelAllCroutons();
-            Crouton.makeText(getActivity(), R.string.loading_title, Style.ALERT, _mapView).show();
-            Map<String, String> params = new HashMap<>();
-            params.put("limit", "30");
-            params.put("lat", String.valueOf(_latLng.latitude));
-            params.put("lng", String.valueOf(_latLng.longitude));
-            params.put("distance", "10000");
-            NetworkManager.getInstance(getActivity()).getDeals(params, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
-                    ArrayList<Deal> deals = new ArrayList<Deal>();
-                    for (int i = 0; i < response.length(); i++) {
-                        deals.add(gson.fromJson(response.optJSONObject(i).toString(), Deal.class));
+            if (isAdded()) {
+                Crouton.makeText(getActivity(), R.string.loading_title, Style.ALERT, _mapView).show();
+                Map<String, String> params = new HashMap<>();
+                params.put("limit", "30");
+                params.put("lat", String.valueOf(_latLng.latitude));
+                params.put("lng", String.valueOf(_latLng.longitude));
+                params.put("distance", "10000");
+                NetworkManager.getInstance(getActivity()).getDeals(params, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+                        ArrayList<Deal> deals = new ArrayList<Deal>();
+                        for (int i = 0; i < response.length(); i++) {
+                            deals.add(gson.fromJson(response.optJSONObject(i).toString(), Deal.class));
+                        }
+                        Singleton.getInstance().setproximityDeals(deals);
                     }
-                    Singleton.getInstance().setproximityDeals(deals);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Crouton.cancelAllCroutons();
-                }
-            });
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Crouton.cancelAllCroutons();
+                    }
+                });
+            }
         }
     }
 

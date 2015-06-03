@@ -189,7 +189,9 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
                 params.put("lng", String.valueOf(_dealPosition.longitude));
             }
             ArrayList<Bitmap> images = new ArrayList<>();
-            images.add(_dealImage);
+            if (_dealImage != null) {
+                images.add(_dealImage);
+            }
             final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
             NetworkManager.getInstance(getActivity()).postDeal(params, images, new Response.Listener<String>() {
                 @Override
@@ -330,15 +332,13 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
         }
     }
 
-    private Bitmap reduceBitmapSize(Bitmap oldBitmap) {
-        if (oldBitmap.getHeight() >= 2048 || oldBitmap.getWidth() >= 2048) {
-            int width = new Double(oldBitmap.getWidth() / 1.5).intValue();
-            int height = new Double(oldBitmap.getHeight() / 1.5).intValue();
-            Bitmap bitmap = reduceBitmapSize(Bitmap.createScaledBitmap(oldBitmap, width, height, true));
-            oldBitmap.recycle();
-            return bitmap;
+    private Bitmap reduceBitmapSize(Bitmap bitmap) {
+        if (bitmap.getHeight() >= 2048 || bitmap.getWidth() >= 2048) {
+            int width = new Double(bitmap.getWidth() / 1.5).intValue();
+            int height = new Double(bitmap.getHeight() / 1.5).intValue();
+            bitmap = reduceBitmapSize(Bitmap.createScaledBitmap(bitmap, width, height, true));
         }
-        return oldBitmap;
+        return bitmap;
     }
 
     private void showFillInfoDialog() {
