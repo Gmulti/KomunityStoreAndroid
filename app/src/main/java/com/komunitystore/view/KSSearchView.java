@@ -46,6 +46,7 @@ public class KSSearchView extends FrameLayout implements KSCheckBox.OnSelectedCh
 
     private static final int TICK_COUNT = 11;
 
+    private KSActionBar _actionBar;
     private LinearLayout _userLayout, _dealLayout, _priceLayout;
     private EditText _userName, _dealContent;
     private KSCheckBox _searchUser, _searchDeal, _typeBonPlan, _typePromo, _typeReduc;
@@ -57,7 +58,6 @@ public class KSSearchView extends FrameLayout implements KSCheckBox.OnSelectedCh
 
     private String _minPrice = "0", _maxPrice = "1000";
 
-    private OnSearchViewAnimated _listener;
     private boolean isExpanded = false, isAnimated = false, measured = false;
 
     public KSSearchView(Context context) {
@@ -83,6 +83,16 @@ public class KSSearchView extends FrameLayout implements KSCheckBox.OnSelectedCh
 
     private void init() {
         View root = View.inflate(getContext(), R.layout.ks_search_view, null);
+        _actionBar = (KSActionBar) root.findViewById(R.id.action_bar);
+        _actionBar.setTitle(getContext().getResources().getString(R.string.search));
+        _actionBar.setRightButton1(new KSActionBarButton(R.drawable.close, new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                expand(false);
+            }
+        }));
+        _actionBar.setRightButton2(null);
+        _actionBar.setLeftButton(null);
         _userLayout = (LinearLayout) root.findViewById(R.id.search_user_layout);
         _dealLayout = (LinearLayout) root.findViewById(R.id.search_deal_layout);
         _searchDeal = (KSCheckBox) root.findViewById(R.id.search_deal);
@@ -294,9 +304,6 @@ public class KSSearchView extends FrameLayout implements KSCheckBox.OnSelectedCh
                 @Override
                 public void onSpringUpdate(Spring spring) {
                     float value = (float) spring.getCurrentValue();
-                    if (_listener != null) {
-                        _listener.onAnimated(value);
-                    }
                     if (value > 1) {
                         value = 1 - (value - 1);
                     }
@@ -326,13 +333,5 @@ public class KSSearchView extends FrameLayout implements KSCheckBox.OnSelectedCh
                 setY(getMeasuredHeight());
             }
         }
-    }
-
-    public void setOnSearchViewAnimatedListener(OnSearchViewAnimated listener) {
-        _listener = listener;
-    }
-
-    public interface OnSearchViewAnimated {
-        void onAnimated(float animationValue);
     }
 }

@@ -234,7 +234,7 @@ public class DealMapFragment extends KSFragment implements LocationListener {
 
     @Override
     public String getTitle() {
-        return "Map";
+        return getResources().getString(R.string.map);
     }
 
     @Override

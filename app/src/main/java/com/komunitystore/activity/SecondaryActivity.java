@@ -86,10 +86,12 @@ public class SecondaryActivity extends FragmentActivity implements KSFragment.On
 
     @Override
     public void onAttach(KSFragment fragment) {
-        _actionBar.setTitle(fragment.getTitle());
-        _actionBar.setLeftButton(fragment.getLeftButton());
-        _actionBar.setRightButton1(fragment.getRightButton1());
-        _actionBar.setRightButton2(fragment.getRightButton2());
-        _actionBar.setVisibility(fragment.shouldDisplayActionBar() ? View.VISIBLE : View.GONE);
+        if (fragment != null) {
+            _actionBar.setTitle(fragment.getTitle());
+            _actionBar.setLeftButton(fragment.getLeftButton());
+            _actionBar.setRightButton1(fragment.getRightButton1());
+            _actionBar.setRightButton2(fragment.getRightButton2());
+            _actionBar.setVisibility(fragment.shouldDisplayActionBar() ? View.VISIBLE : View.GONE);
+        }
     }
 }

@@ -54,7 +54,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Tanguy on 09/05/2015.
  */
-public class ProfileFragment extends KSFragment {
+public class ProfileFragment extends KSFragment implements DealAdapter.OnDealDeletedListener {
 
     public static final int REQUEST_IMAGE_CAPTURE = 1, REQUEST_IMAGE_GALLERY = 2;
 
@@ -230,7 +230,13 @@ public class ProfileFragment extends KSFragment {
 
     private void showDeals() {
         _adapter = new DealAdapter(getActivity(), Singleton.getInstance().getMyDeals(), DealAdapter.Type.REDUCE);
+        _adapter.setOnDealDeletedListener(this);
         _list.setAdapter(_adapter);
+    }
+
+    @Override
+    public void onDelete(Deal deal) {
+        // TODO DELETE DEAL HEAR
     }
 
 

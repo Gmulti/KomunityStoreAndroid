@@ -45,19 +45,19 @@ public class MainActivity extends FragmentActivity implements KSFragment.OnAttac
         setContentView(R.layout.activity_main);
         _actionBar = (KSActionBar) findViewById(R.id.action_bar);
         _tabbar = (KSTabbar) findViewById(R.id.tabbar);
-        _tabbar.setLeftButton(new KSTabbarButton(R.drawable.map, "Map", new View.OnClickListener() {
+        _tabbar.setLeftButton(new KSTabbarButton(R.drawable.map, getResources().getString(R.string.map), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showFragment(_mapFragment);
             }
         }));
-        _tabbar.setMiddleButton(new KSTabbarButton(R.drawable.list, "List", new View.OnClickListener() {
+        _tabbar.setMiddleButton(new KSTabbarButton(R.drawable.list, getResources().getString(R.string.list), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showFragment(_listDealFragmet);
             }
         }));
-        _tabbar.setRightButton(new KSTabbarButton(R.drawable.profile, "Profile", new View.OnClickListener() {
+        _tabbar.setRightButton(new KSTabbarButton(R.drawable.profile, getResources().getString(R.string.profile), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showFragment(_profileFragment);
@@ -74,7 +74,6 @@ public class MainActivity extends FragmentActivity implements KSFragment.OnAttac
 
     private void showFragment(KSFragment fragment) {
         _search.expandWithoutAnimation(false);
-        _search.setOnSearchViewAnimatedListener(null);
         ImageButton rightButton1 = _actionBar.getRightButton1();
         rightButton1.setColorFilter(getResources().getColor(android.R.color.white));
         rightButton1.setBackgroundColor(getResources().getColor(R.color.red));

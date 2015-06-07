@@ -30,6 +30,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -70,11 +72,12 @@ public class KSMultiPartRequest extends AsyncTask<Void, Void, String> {
         String result = null;
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(_url);
-        httppost.addHeader("Accept", "application/json");
         if (_accessToken != null) {
             httppost.addHeader("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
-            httppost.addHeader("Language", _context.getResources().getString(R.string.language));
+            //httppost.addHeader("Content-Type", "charset=utf-8");
         }
+        httppost.addHeader("Language", _context.getResources().getString(R.string.language));
+        httppost.addHeader("Accept-Charset","utf-8");
         try {
             MultipartEntity entity = new MultipartEntity();
             if (postDeal) {

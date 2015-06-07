@@ -38,32 +38,33 @@ import java.util.Map;
 public class NetworkManager {
 
     //PREPROD
-    //public static final String BASE_URL = "http://104.236.195.92";
+    public static final String BASE_URL = "http://104.236.195.92";
     //PROD
-    public static final String BASE_URL = "http://api.komunitystore.com";
-    public static final String POST_TOKEN = "/token";
+    //public static final String BASE_URL = "http://api.komunitystore.com";
+    public static final String POST_TOKEN = "/app_dev.php/token";
 
     //PREPROD
-    //public static final String CLIENT_ID = "317b47172";
+    public static final String CLIENT_ID = "317b47172";
     //PROD
-    public static final String CLIENT_ID = "29e111d0c00";
+    //public static final String CLIENT_ID = "29e111d0c00";
     public static final String GRANT_TYPE = "password";
     public static final String SCOPE = "public";
     //PREPROD
-    //public static final String CLIENT_SECRET = "jsz8bll8p6o0ocww8ssg4ccwcoowcw8";
+    public static final String CLIENT_SECRET = "jsz8bll8p6o0ocww8ssg4ccwcoowcw8";
     //PROD
-    public static final String CLIENT_SECRET = "qu9dh27h68gcwg80sso4okccoc088cw";
+    //public static final String CLIENT_SECRET = "qu9dh27h68gcwg80sso4okccoc088cw";
     //PREPROD
-    //public static final String BASE_URL_PUBLIC = "http://104.236.195.92/api/public";
+    public static final String BASE_URL_PUBLIC = "http://104.236.195.92/api/public";
     //PROD
-    public static final String BASE_URL_PUBLIC = "http://api.komunitystore.com/api/public";
+    //public static final String BASE_URL_PUBLIC = "http://api.komunitystore.com/api/public";
     public static final String POST_REGISTER = "/users/register.json";
     //PREPROD
-    //public static final String BASE_URL_API = "http://104.236.195.92/app_dev.php/api/v1";
+    public static final String BASE_URL_API = "http://104.236.195.92/app_dev.php/api/v1";
     //PROD
-    public static final String BASE_URL_API = "http://api.komunitystore.com/api/v1";
+    //public static final String BASE_URL_API = "http://api.komunitystore.com/api/v1";
     public static final String GET_ME = "/me.json";
     public static final String GET_DEALS = "/deals.json";
+    public static final String SEARCH_DEALS = "/search/deals.json";
     public static final String GET_USERS = "/users.json";
 
     private static final String NO_INTERNET_CONNECTION = "no_internet_connection";
@@ -203,6 +204,24 @@ public class NetworkManager {
     public void getDeal(int id, Response.Listener listener, Response.ErrorListener errorListener) {
         String url = BASE_URL_API + "/deals/" + id + ".json";
         addToQueue(new KSRequest(Request.Method.GET, url, Deal.class, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
+    public void searchDeals(Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + SEARCH_DEALS;
+        if (params != null) {
+            int count = 0;
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (count == 0) {
+                    url = url + "?" + key + "=" + value;
+                } else {
+                    url = url + "&" + key + "=" + value;
+                }
+                count++;
+            }
+        }
+        addToQueue(new KSRequest(Request.Method.GET, url, null, KSRequest.ReturnType.ARRAY, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
     public void getUsers(Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener) {

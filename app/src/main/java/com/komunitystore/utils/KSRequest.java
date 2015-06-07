@@ -38,12 +38,7 @@ public class KSRequest extends Request {
     private String _language;
 
     public KSRequest(int method, String url, Class clazz, ReturnType returnType, Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener) {
-        super(method, url, errorListener);
-        _listener = listener;
-        _clazz = clazz;
-        _params = params;
-        _returnType = returnType;
-        _gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+        this(method, url, clazz, returnType, params, listener, errorListener, null);
     }
 
     public KSRequest(int method, String url, Class clazz, ReturnType returnType, Map<String, String> params, Response.Listener listener, Response.ErrorListener errorListener, AccessToken accessToken) {
@@ -69,13 +64,12 @@ public class KSRequest extends Request {
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headers = new HashMap<>(super.getHeaders());
         if (_accessToken != null) {
-            headers.put("Accept", "application/json");
-            // TODO send language
-            //headers.put("Language", "application/json");
-            headers.put("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
-            if (!TextUtils.isEmpty(_language)) {
-                headers.put("Language", _language);
-            }
+            //headers.put("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
+            headers.put("Authorization", "Bearer 2bc07fb81d3e887ac7bf1262b0f556581be8d792");
+        }
+        headers.put("Content-Type", "utf-8");
+        if (!TextUtils.isEmpty(_language)) {
+            headers.put("Language", _language);
         }
         return headers;
     }

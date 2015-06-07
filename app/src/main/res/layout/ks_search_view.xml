@@ -7,10 +7,16 @@
     android:focusable="false"
     android:orientation="vertical">
 
+    <com.komunitystore.view.KSActionBar
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ks_action_bar_size" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/search"
+        android:layout_below="@+id/action_bar"
         android:paddingBottom="5dp"
         android:paddingTop="5dp">
 

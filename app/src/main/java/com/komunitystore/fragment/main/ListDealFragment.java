@@ -51,7 +51,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Tanguy on 06/05/2015.
  */
-public class ListDealFragment extends KSFragment implements KSSearchView.OnSearchViewAnimated {
+public class ListDealFragment extends KSFragment {
 
     private View _rootView;
 
@@ -103,7 +103,6 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
     public void onStart() {
         super.onStart();
         _search = ((MainActivity) getActivity()).getKSSearchView();
-        _search.setOnSearchViewAnimatedListener(this);
         EventBus.getDefault().register(this);
     }
 
@@ -231,25 +230,5 @@ public class ListDealFragment extends KSFragment implements KSSearchView.OnSearc
     @Override
     public boolean shouldDisplaySearchBar() {
         return true;
-    }
-
-    @Override
-    public void onAnimated(float animationValue) {
-        int white = getResources().getColor(android.R.color.white),
-                red = getResources().getColor(R.color.red);
-        ImageButton rightButton1 = ((MainActivity) getActivity()).getKSActionBar().getRightButton1();
-        if (animationValue >= 0 && animationValue <= 1) {
-            if (_search.isExpanded()) {
-                rightButton1.setColorFilter(ColorUtils.getColor(red, white, animationValue));
-                rightButton1.setBackgroundColor(ColorUtils.getColor(white, red, animationValue));
-            } else {
-                rightButton1.setColorFilter(ColorUtils.getColor(white, red, animationValue));
-                rightButton1.setBackgroundColor(ColorUtils.getColor(red, white, animationValue));
-            }
-        }
-        if (_search.isExpanded()) {
-            animationValue = animationValue * -1;
-        }
-        rightButton1.setRotation(animationValue * 360);
     }
 }

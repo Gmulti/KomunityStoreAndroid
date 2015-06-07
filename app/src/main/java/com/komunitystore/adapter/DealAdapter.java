@@ -3,6 +3,7 @@ package com.komunitystore.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -10,6 +11,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,15 +36,25 @@ public class DealAdapter extends ArrayAdapter<Deal> {
     private List<Deal> _objects;
 
     private Type _type;
+    private OnDealDeletedListener _listener;
 
     public enum Type {
         FULL, REDUCE
     }
 
+    private boolean _myDeals = false;
+
     public DealAdapter(Context context, List<Deal> objects, Type type) {
         super(context, R.layout.adapter_deal);
         _objects = objects;
         _type = type;
+    }
+
+    public DealAdapter(Context context, List<Deal> objects, Type type, boolean myDeals) {
+        super(context, R.layout.adapter_deal);
+        _objects = objects;
+        _type = type;
+        _myDeals = myDeals;
     }
 
     @Override
@@ -122,6 +134,19 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                     activity.overridePendingTransition(R.anim.activity_from_left, R.anim.activity_to_right);
                 }
             });
+            if (_myDeals) {
+                holder.delete.setVisibility(View.VISIBLE);
+                holder.delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (_listener != null) {
+                            _listener.onDelete(deal);
+                        }
+                    }
+                });
+            } else {
+                holder.delete.setVisibility(View.GONE);
+            }
             Spannable span = new SpannableString(deal.getTitle() + "  - " + deal.getDate());
             span.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.date_grey)), deal.getTitle().length(), span.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             holder.title.setText(span);
@@ -172,6 +197,10 @@ public class DealAdapter extends ArrayAdapter<Deal> {
         }
     }
 
+    public void setOnDealDeletedListener(OnDealDeletedListener listener) {
+        _listener = listener;
+    }
+
     private void launchActivity(Class clazz, int id) {
         Intent intent = new Intent(getContext(), SecondaryActivity.class);
         intent.putExtra(SecondaryActivity.EXTRA_FRAGMENT, clazz.getName());
@@ -185,6 +214,10 @@ public class DealAdapter extends ArrayAdapter<Deal> {
         activity.overridePendingTransition(R.anim.activity_from_left, R.anim.activity_to_right);
     }
 
+    public interface OnDealDeletedListener {
+        void onDelete(Deal deal);
+    }
+
     private class DealHolder {
 
         private LinearLayout userLayout;
@@ -192,6 +225,7 @@ public class DealAdapter extends ArrayAdapter<Deal> {
         public NetworkImageView userImage, dealImage;
         public ImageView geoloc;
         public String dealImageUrl, userImageUrl;
+        public ImageButton delete;
 
         public DealHolder(View v, Type type) {
             if (type == Type.FULL) {
@@ -212,6 +246,7 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                 dealImage = (NetworkImageView) v.findViewById(R.id.deal_image);
                 dealType = (TextView) v.findViewById(R.id.type);
                 key = (TextView) v.findViewById(R.id.key);
+                delete = (ImageButton) v.findViewById(R.id.delete);
             }
             v.setTag(this);
         }
