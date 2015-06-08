@@ -89,13 +89,13 @@ public class ListDealFragment extends KSFragment {
             });
             _noDeal = (TextView) _rootView.findViewById(R.id.no_deal);
         }
-        if (Singleton.getInstance().getDeals() != null) {
-            if (_adapter != null || _adapter.getCount() > 0) {
-                showDeals();
-            }
-        } else {
-            getDeals();
-        }
+        //if (Singleton.getInstance().getDeals() != null) {
+        //    if (_adapter != null || _adapter.getCount() > 0) {
+        //        showDeals();
+        //    }
+        //} else {
+        //}
+        getDeals();
         return _rootView;
     }
 
@@ -123,8 +123,12 @@ public class ListDealFragment extends KSFragment {
     }
 
     private void showDeals() {
-
-        _swipe.setRefreshing(false);
+        _swipe.post(new Runnable() {
+            @Override
+            public void run() {
+                _swipe.setRefreshing(false);
+            }
+        });
         _adapter = new DealAdapter(getActivity(), Singleton.getInstance().getDeals(), DealAdapter.Type.FULL);
         _list.setAdapter(_adapter);
         if (_adapter.getCount() == 0) {

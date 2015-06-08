@@ -82,10 +82,10 @@ public class MainActivity extends FragmentActivity implements KSFragment.OnAttac
         rightButton2.setColorFilter(getResources().getColor(android.R.color.white));
         rightButton2.setBackgroundColor(getResources().getColor(R.color.red));
         rightButton2.setRotation(0);
-        ImageButton leftButton = _actionBar.getLeftButton();
-        leftButton.setColorFilter(getResources().getColor(android.R.color.white));
-        leftButton.setBackgroundColor(getResources().getColor(R.color.red));
-        leftButton.setRotation(0);
+        //ImageButton leftButton = _actionBar.getLeftButton();
+        //leftButton.setColorFilter(getResources().getColor(android.R.color.white));
+        //leftButton.setBackgroundColor(getResources().getColor(R.color.red));
+        //leftButton.setRotation(0);
         if (getSupportFragmentManager().findFragmentById(R.id.container) == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
         } else if (getSupportFragmentManager().findFragmentById(R.id.container).getClass() != fragment.getClass()) {

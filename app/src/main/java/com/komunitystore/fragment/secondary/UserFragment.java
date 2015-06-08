@@ -158,7 +158,7 @@ public class UserFragment extends KSFragment {
         _list.setVisibility(View.GONE);
         Map<String, String> params = new HashMap<>();
         params.put("user_id", String.valueOf(_user.getId()));
-        NetworkManager.getInstance(getActivity()).getDeals(params, new Response.Listener<JSONArray>() {
+        NetworkManager.getInstance(getActivity()).searchDeals(params, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 _progress.setVisibility(View.GONE);

@@ -5,10 +5,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.Html;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.komunitystore.KSApp;
 import com.komunitystore.R;
@@ -26,6 +29,8 @@ import com.komunitystore.model.KSErrorResponse;
 import com.komunitystore.model.User;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,30 +43,31 @@ import java.util.Map;
 public class NetworkManager {
 
     //PREPROD
-    public static final String BASE_URL = "http://104.236.195.92";
+    //public static final String BASE_URL = "http://preprod.komunitystore.com";
     //PROD
-    //public static final String BASE_URL = "http://api.komunitystore.com";
-    public static final String POST_TOKEN = "/app_dev.php/token";
+    public static final String BASE_URL = "http://api.komunitystore.com";
+    public static final String POST_TOKEN = "/token";
+    public static final String VERIFY_ACCESS_TOKEN = "/verify";
 
     //PREPROD
-    public static final String CLIENT_ID = "317b47172";
+    //public static final String CLIENT_ID = "317b47172";
     //PROD
-    //public static final String CLIENT_ID = "29e111d0c00";
+    public static final String CLIENT_ID = "29e111d0c00";
     public static final String GRANT_TYPE = "password";
     public static final String SCOPE = "public";
     //PREPROD
-    public static final String CLIENT_SECRET = "jsz8bll8p6o0ocww8ssg4ccwcoowcw8";
+    //public static final String CLIENT_SECRET = "jsz8bll8p6o0ocww8ssg4ccwcoowcw8";
     //PROD
-    //public static final String CLIENT_SECRET = "qu9dh27h68gcwg80sso4okccoc088cw";
+    public static final String CLIENT_SECRET = "qu9dh27h68gcwg80sso4okccoc088cw";
     //PREPROD
-    public static final String BASE_URL_PUBLIC = "http://104.236.195.92/api/public";
+    //public static final String BASE_URL_PUBLIC = "http://preprod.komunitystore.com/api/public";
     //PROD
-    //public static final String BASE_URL_PUBLIC = "http://api.komunitystore.com/api/public";
+    public static final String BASE_URL_PUBLIC = "http://api.komunitystore.com/api/public";
     public static final String POST_REGISTER = "/users/register.json";
     //PREPROD
-    public static final String BASE_URL_API = "http://104.236.195.92/app_dev.php/api/v1";
+    //public static final String BASE_URL_API = "http://preprod.komunitystore.com/api/v1";
     //PROD
-    //public static final String BASE_URL_API = "http://api.komunitystore.com/api/v1";
+    public static final String BASE_URL_API = "http://api.komunitystore.com/api/v1";
     public static final String GET_ME = "/me.json";
     public static final String GET_DEALS = "/deals.json";
     public static final String SEARCH_DEALS = "/search/deals.json";
@@ -93,36 +99,22 @@ public class NetworkManager {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 Activity currentActivity = ((KSApp) _context.getApplicationContext()).getCurrentActivity();
-                if (error.getMessage() != null) {
-                    if (!error.getMessage().equals(NO_INTERNET_CONNECTION)) {
-                        if (error.getMessage().contains("error_description")) {
-                            KSErrorResponse errorResponse = new Gson().fromJson(error.getMessage(), KSErrorResponse.class);
-                            new AlertDialog.Builder(currentActivity)
-                                    .setTitle(errorResponse.getError_description())
-                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .create().show();
-                        } else {
-                            new AlertDialog.Builder(currentActivity)
-                                    .setTitle(R.string.error_title)
-                                    .setMessage(R.string.error_message)
-                                    .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .create().show();
+                String message = error.getMessage();
+                if (error.networkResponse != null && error.networkResponse.statusCode >= 500) {
+                    if (message != null) {
+                        try {
+                            JSONObject json = new JSONObject(message);
+                            message = json.optString("error_description", _context.getString(R.string.error_message));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            message = _context.getString(R.string.error_message);
                         }
+                    } else {
+                        message = _context.getString(R.string.error_message);
                     }
-                } else {
                     new AlertDialog.Builder(currentActivity)
                             .setTitle(R.string.error_title)
-                            .setMessage(R.string.error_message)
+                            .setMessage(message)
                             .setNeutralButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -130,6 +122,19 @@ public class NetworkManager {
                                 }
                             })
                             .create().show();
+                } else {
+                    if (message != null) {
+                        try {
+                            JSONObject json = new JSONObject(message);
+                            message = json.optString("error_description", _context.getString(R.string.error_message));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            message = _context.getString(R.string.error_message);
+                        }
+                    } else {
+                        message = _context.getString(R.string.error_message);
+                    }
+                    Toast.makeText(currentActivity, message, Toast.LENGTH_SHORT).show();
                 }
                 errorListener.onErrorResponse(error);
             }
@@ -173,6 +178,10 @@ public class NetworkManager {
         params.put("grant_type", GRANT_TYPE);
         params.put("scope", SCOPE);
         addToQueue(new KSRequest(Request.Method.POST, BASE_URL + POST_TOKEN, AccessToken.class, KSRequest.ReturnType.OBJECT, params, listener, getErrorListener(errorListener)));
+    }
+
+    public void verify(Response.Listener listener, Response.ErrorListener errorListener) {
+        addToQueue(new KSRequest(Request.Method.POST, BASE_URL + VERIFY_ACCESS_TOKEN, null, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
     }
 
     public void register(String email, String username, String password, Response.Listener listener, Response.ErrorListener errorListener) {
@@ -253,6 +262,11 @@ public class NetworkManager {
         request.execute();
     }
 
+    public void deleteDeal(Deal deal, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = BASE_URL_API + "/deals/" + deal.getId() + ".json";
+        addToQueue(new KSRequest(Request.Method.DELETE, url, null, KSRequest.ReturnType.OBJECT, null, listener, getErrorListener(errorListener), KSSharedPreferences.getInstance(_context).getAccessToken()));
+    }
+
     public void changeUserImage(Bitmap bitmap, Response.Listener listener) {
         String url = BASE_URL_API + "/users/" + Singleton.getInstance().getCurrentUser().getId() + "/images.json";
         KSMultiPartRequest request = new KSMultiPartRequest(_context, url, bitmap, listener, KSSharedPreferences.getInstance(_context).getAccessToken());
@@ -277,6 +291,11 @@ public class NetworkManager {
     public void getLocationsFromAddress(String address, Response.Listener listener, Response.ErrorListener errorListener) {
         String url = TextUtils.htmlEncode("https://maps.googleapis.com/maps/api/geocode/json?address=" + address);
         url = url.replaceAll(" ", "%20");
+        addToQueue(new KSRequest(Request.Method.GET, url, null, KSRequest.ReturnType.OBJECT, null, listener, errorListener));
+    }
+
+    public void getAddressFromLocation(LatLng latlng, Response.Listener listener, Response.ErrorListener errorListener) {
+        String url = TextUtils.htmlEncode("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng.latitude + "," + latlng.longitude);
         addToQueue(new KSRequest(Request.Method.GET, url, null, KSRequest.ReturnType.OBJECT, null, listener, errorListener));
     }
 

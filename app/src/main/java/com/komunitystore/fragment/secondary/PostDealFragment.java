@@ -228,76 +228,70 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
     }
 
     private void findAddress() {
-        /*new AlertDialog.Builder(getActivity())
+        new AlertDialog.Builder(getActivity())
                 .setPositiveButton("Here", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        final LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        if (location != null) {
-                            _dealPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                        } else {
-                            final ProgressDialog progress = ProgressDialog.show(getActivity(), null, getResources().getText(R.string.loading_message));
-                            progress.setCancelable(false);
-                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+                        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                        Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        Location wifiLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (gpsLocation != null || wifiLocation != null) {
+                            final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
+                            if (gpsLocation != null) {
+                                _dealPosition = new LatLng(gpsLocation.getLatitude(), gpsLocation.getLongitude());
+                            } else {
+                                _dealPosition = new LatLng(wifiLocation.getLatitude(), wifiLocation.getLongitude());
+                            }
+                            NetworkManager.getInstance(getActivity()).getAddressFromLocation(_dealPosition, new Response.Listener<JSONObject>() {
                                 @Override
-                                public void onLocationChanged(Location location) {
-                                    _dealPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                                    locationManager.removeUpdates(this);
+                                public void onResponse(JSONObject response) {
                                     progress.dismiss();
-
+                                    if (response != null && response.optJSONArray("results").length() > 0) {
+                                        _address.setText(response.optJSONArray("results").optJSONObject(0).optString("formatted_address", ""));
+                                    }
                                 }
-
+                            }, new Response.ErrorListener() {
                                 @Override
-                                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                                }
-
-                                @Override
-                                public void onProviderEnabled(String provider) {
-
-                                }
-
-                                @Override
-                                public void onProviderDisabled(String provider) {
-
+                                public void onErrorResponse(VolleyError error) {
+                                    progress.dismiss();
                                 }
                             });
+                        } else {
+                            Toast.makeText(getActivity(), R.string.cant_locate, Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
                 .setNegativeButton("Search an address", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                        FindAddressDialog findAddressDialog = new FindAddressDialog(getActivity());
+                        findAddressDialog.setOnLocationChoosedListener(new FindAddressDialog.OnLocationChoosedListener() {
+                            @Override
+                            public void onLocationChoosed(LatLng latlng, String display) {
+                                _address.setText(display);
+                                _dealPosition = latlng;
+                            }
+
+                            @Override
+                            public void onError() {
+                                new AlertDialog.Builder(getActivity())
+                                        .setTitle(R.string.error_title)
+                                        .setMessage(R.string.error_message)
+                                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .create().show();
+                            }
+                        });
+                        findAddressDialog.show();
 
                     }
                 })
-                .create().show();*/
-        FindAddressDialog findAddressDialog = new FindAddressDialog(getActivity());
-        findAddressDialog.setOnLocationChoosedListener(new FindAddressDialog.OnLocationChoosedListener() {
-            @Override
-            public void onLocationChoosed(LatLng latlng, String display) {
-                _address.setText(display);
-                _dealPosition = latlng;
-            }
-
-            @Override
-            public void onError() {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.error_title)
-                        .setMessage(R.string.error_message)
-                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create().show();
-            }
-        });
-        findAddressDialog.show();
+                .create().show();
     }
 
     private void takePicture() {

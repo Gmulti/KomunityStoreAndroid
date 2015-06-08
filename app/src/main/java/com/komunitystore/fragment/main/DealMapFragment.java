@@ -61,6 +61,8 @@ public class DealMapFragment extends KSFragment implements LocationListener {
     private GoogleMap _map;
     private LocationManager _locationManager;
 
+    private boolean located = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (_rootView == null) {
@@ -70,7 +72,6 @@ public class DealMapFragment extends KSFragment implements LocationListener {
             _mapView.onResume();
             MapsInitializer.initialize(getActivity().getApplicationContext());
             _map = _mapView.getMap();
-            _map.setMyLocationEnabled(true);
             _map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
@@ -91,20 +92,21 @@ public class DealMapFragment extends KSFragment implements LocationListener {
                 }
             });
             _map.clear();
-            _locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            if (!_locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                buildAlertMessageNoGps();
-            }
-            _locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 1000, this);
-            _locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5000, this);
         }
+        _map.setMyLocationEnabled(true);
         return _rootView;
     }
 
     private void setPosition(Location location) {
-        _latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        _map.moveCamera(CameraUpdateFactory.newLatLng(_latLng));
-        _map.animateCamera(CameraUpdateFactory.zoomTo(15));
+        if (location != null) {
+            located = false;
+            _latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        }
+        if (!located && _latLng != null) {
+            located = true;
+            _map.moveCamera(CameraUpdateFactory.newLatLng(_latLng));
+            _map.animateCamera(CameraUpdateFactory.zoomTo(12));
+        }
         getDeals();
     }
 
@@ -130,7 +132,7 @@ public class DealMapFragment extends KSFragment implements LocationListener {
                 params.put("lat", String.valueOf(_latLng.latitude));
                 params.put("lng", String.valueOf(_latLng.longitude));
                 params.put("distance", "10000");
-                NetworkManager.getInstance(getActivity()).getDeals(params, new Response.Listener<JSONArray>() {
+                NetworkManager.getInstance(getActivity()).searchDeals(params, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
@@ -219,12 +221,23 @@ public class DealMapFragment extends KSFragment implements LocationListener {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        _locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (!_locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        }
+        _locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 120000, 1000, this);
+        _locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 120000, 5000, this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        _locationManager.removeUpdates(this);
+        _locationManager = null;
+        if (_map != null) {
+            _map.setMyLocationEnabled(false);
+        }
     }
 
     @Override
@@ -247,7 +260,7 @@ public class DealMapFragment extends KSFragment implements LocationListener {
         return new KSActionBarButton(R.drawable.refresh, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDeals();
+                setPosition(null);
             }
         });
     }

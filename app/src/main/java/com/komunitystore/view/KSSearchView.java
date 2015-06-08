@@ -225,7 +225,7 @@ public class KSSearchView extends FrameLayout implements KSCheckBox.OnSelectedCh
                         .create().show();
             } else {
                 final ProgressDialog progress = ProgressDialog.show(getContext(), getContext().getText(R.string.loading_title), getContext().getText(R.string.loading_message));
-                NetworkManager.getInstance(getContext()).getDeals(params, new Response.Listener<JSONArray>() {
+                NetworkManager.getInstance(getContext()).searchDeals(params, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         progress.dismiss();

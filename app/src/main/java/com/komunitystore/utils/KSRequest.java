@@ -63,11 +63,11 @@ public class KSRequest extends Request {
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headers = new HashMap<>(super.getHeaders());
+        headers.put("Accept", "application/json");
         if (_accessToken != null) {
-            //headers.put("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
-            headers.put("Authorization", "Bearer 2bc07fb81d3e887ac7bf1262b0f556581be8d792");
+            headers.put("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
+            //headers.put("Authorization", "Bearer 2bc07fb81d3e887ac7bf1262b0f556581be8d792");
         }
-        headers.put("Content-Type", "utf-8");
         if (!TextUtils.isEmpty(_language)) {
             headers.put("Language", _language);
         }

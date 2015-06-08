@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -74,15 +75,15 @@ public class KSMultiPartRequest extends AsyncTask<Void, Void, String> {
         HttpPost httppost = new HttpPost(_url);
         if (_accessToken != null) {
             httppost.addHeader("Authorization", _accessToken.getToken_type() + " " + _accessToken.getAccess_token());
-            //httppost.addHeader("Content-Type", "charset=utf-8");
         }
         httppost.addHeader("Language", _context.getResources().getString(R.string.language));
-        httppost.addHeader("Accept-Charset","utf-8");
         try {
+            //            MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE, null, Charset.forName("UTF-8"));
             MultipartEntity entity = new MultipartEntity();
             if (postDeal) {
+                Charset chars = Charset.forName("UTF-8");
                 for (Map.Entry<String, String> entry : _params.entrySet()) {
-                    entity.addPart(entry.getKey(), new StringBody(entry.getValue()));
+                    entity.addPart(entry.getKey(), new StringBody(entry.getValue(), chars));
                 }
                 for (int i = 0; i < _images.size(); i++) {
                     //entity.addPart("medias[" + i + "]", new FileBody(bitmapToFile(_images.get(i))));

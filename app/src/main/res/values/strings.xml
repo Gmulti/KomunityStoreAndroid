@@ -22,6 +22,8 @@
     <string name="list">List</string>
     <string name="profile">Profile</string>
     <string name="my_profile">My Profile</string>
+    <string name="delete_deal_confirmation">Are you sure you want to delete this deal ?</string>
+    <string name="cant_locate">Couldn\'t locate you</string>
     <string name="no_connection_title">Connection Error</string>
     <string name="no_connection_message">Please connect to a working Internet connection and try again</string>
     <string name="no_deal">No deal was found.\n\nFind users to follow using the search function or try the map to see the deals near you !</string>

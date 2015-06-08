@@ -2,6 +2,7 @@ package com.komunitystore.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.komunitystore.model.AccessToken;
 
@@ -46,12 +47,20 @@ public class KSSharedPreferences {
     }
 
     public AccessToken getAccessToken() {
-        AccessToken accessToken = new AccessToken();
-        accessToken.setAccess_token(_prefs.getString(KS_ACCESS_TOKEN, ""));
-        accessToken.setToken_type(_prefs.getString(KS_TOKEN_TYPE, ""));
-        accessToken.setExpires_in(_prefs.getLong(KS_EXPIRES_IN, 0));
-        accessToken.setRefresh_token(_prefs.getString(KS_REFRESH_TOKEN, ""));
-        accessToken.setScope(_prefs.getString(KS_SCOPE, ""));
-        return accessToken;
+        AccessToken at = new AccessToken();
+        String accessToken = _prefs.getString(KS_ACCESS_TOKEN, "");
+        String tokenType = _prefs.getString(KS_TOKEN_TYPE, "");
+        Long expiresIn = _prefs.getLong(KS_EXPIRES_IN, 0);
+        String refreshToken = _prefs.getString(KS_REFRESH_TOKEN, "");
+        String scope = _prefs.getString(KS_SCOPE, "");
+        at.setAccess_token(accessToken);
+        at.setToken_type(tokenType);
+        at.setExpires_in(expiresIn);
+        at.setRefresh_token(refreshToken);
+        at.setScope(scope);
+        if (TextUtils.isEmpty(accessToken) ||TextUtils.isEmpty(tokenType) || expiresIn == 0 ||TextUtils.isEmpty(refreshToken) ||TextUtils.isEmpty(scope)) {
+            return null;
+        }
+        return at;
     }
 }

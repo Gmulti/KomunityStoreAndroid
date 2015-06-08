@@ -157,6 +157,7 @@ public class ProfileFragment extends KSFragment implements DealAdapter.OnDealDel
                         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
                         _user = gson.fromJson(json.toString(), User.class);
                         configureView();
+                        getUserDeals();
                     } catch (Exception e) {
                         e.printStackTrace();
                         new AlertDialog.Builder(getActivity())
@@ -229,26 +230,55 @@ public class ProfileFragment extends KSFragment implements DealAdapter.OnDealDel
     }
 
     private void showDeals() {
-        _adapter = new DealAdapter(getActivity(), Singleton.getInstance().getMyDeals(), DealAdapter.Type.REDUCE);
+        _adapter = new DealAdapter(getActivity(), Singleton.getInstance().getMyDeals(), DealAdapter.Type.REDUCE, true);
         _adapter.setOnDealDeletedListener(this);
         _list.setAdapter(_adapter);
     }
 
     @Override
-    public void onDelete(Deal deal) {
-        // TODO DELETE DEAL HEAR
+    public void onDelete(final Deal deal) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(deal.getTitle())
+                .setMessage(getResources().getString(R.string.delete_deal_confirmation))
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
+                        NetworkManager.getInstance(getActivity()).deleteDeal(deal, new Response.Listener() {
+                            @Override
+                            public void onResponse(Object response) {
+                                progress.dismiss();
+                                getUserDeals();
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                progress.dismiss();
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
     }
 
 
     private void getUserDeals() {
         _progress.setVisibility(View.VISIBLE);
+        _list.setVisibility(View.GONE);
         Map<String, String> params = new HashMap<>();
         params.put("user_id", String.valueOf(_user.getId()));
-        NetworkManager.getInstance(getActivity()).getDeals(params, new Response.Listener<JSONArray>() {
+        NetworkManager.getInstance(getActivity()).searchDeals(params, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 _progress.setVisibility(View.GONE);
-                Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'+0200'").create();
+                _list.setVisibility(View.VISIBLE);
+                Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
                 ArrayList<Deal> userDeals = new ArrayList<Deal>();
                 for (int i = 0; i < response.length(); i++) {
                     userDeals.add(gson.fromJson(response.optJSONObject(i).toString(), Deal.class));
@@ -281,6 +311,31 @@ public class ProfileFragment extends KSFragment implements DealAdapter.OnDealDel
     @Override
     public KSActionBarButton getRightButton1() {
 
+        return new KSActionBarButton(R.drawable.refresh, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ProgressDialog progress = ProgressDialog.show(getActivity(), getResources().getString(R.string.loading_title), getResources().getString(R.string.loading_message));
+                NetworkManager.getInstance(getActivity()).getUserInfo(new Response.Listener<User>() {
+                    @Override
+                    public void onResponse(User response) {
+                        progress.dismiss();
+                        _user = response;
+                        configureView();
+                        getUserDeals();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progress.dismiss();
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public KSActionBarButton getRightButton2() {
+
         return new KSActionBarButton(R.drawable.add, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -290,11 +345,6 @@ public class ProfileFragment extends KSFragment implements DealAdapter.OnDealDel
                 getActivity().overridePendingTransition(R.anim.activity_from_bottom, R.anim.activity_fade_out);
             }
         });
-    }
-
-    @Override
-    public KSActionBarButton getRightButton2() {
-        return null;
     }
 
     @Override

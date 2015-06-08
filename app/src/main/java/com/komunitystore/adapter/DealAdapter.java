@@ -3,6 +3,7 @@ package com.komunitystore.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -68,6 +69,10 @@ public class DealAdapter extends ArrayAdapter<Deal> {
             } else {
                 holder = (DealHolder) convertView.getTag();
             }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                convertView.setElevation(5);
+                convertView.setTranslationZ(5);
+            }
             holder.userLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -81,9 +86,11 @@ public class DealAdapter extends ArrayAdapter<Deal> {
             holder.username.setText(deal.getUser().getUsername());
             holder.geoloc.setVisibility(deal.isGeoloc() ? View.VISIBLE : View.GONE);
             if (deal.getType().equals("bon-plan")) {
-                holder.dealType.setText(R.string.bon_plan);
-                holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
+                holder.dealType.setVisibility(View.GONE);
+                holder.key.setVisibility(View.GONE);
             } else if (deal.getType().equals("reduction")) {
+                holder.dealType.setVisibility(View.VISIBLE);
+                holder.key.setVisibility(View.VISIBLE);
                 holder.dealType.setText(R.string.reduction);
                 if (deal.getType_view().getSub_type().equals("cash")) {
                     holder.key.setText(deal.getType_view().getInfos_view() + " %");
@@ -91,6 +98,8 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                     holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
                 }
             } else if (deal.getType().equals("code-promo")) {
+                holder.dealType.setVisibility(View.VISIBLE);
+                holder.key.setVisibility(View.VISIBLE);
                 holder.dealType.setText(R.string.code_promo);
                 holder.key.setText(deal.getType_view().getInfos_view());
             }
@@ -152,9 +161,11 @@ public class DealAdapter extends ArrayAdapter<Deal> {
             holder.title.setText(span);
             holder.message.setText(deal.getContent());
             if (deal.getType().equals("bon-plan")) {
-                holder.dealType.setText(R.string.bon_plan);
-                holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
+                holder.dealType.setVisibility(View.GONE);
+                holder.key.setVisibility(View.GONE);
             } else if (deal.getType().equals("reduction")) {
+                holder.dealType.setVisibility(View.VISIBLE);
+                holder.key.setVisibility(View.VISIBLE);
                 holder.dealType.setText(R.string.reduction);
                 if (deal.getType_view().getSub_type().equals("cash")) {
                     holder.key.setText(deal.getType_view().getInfos_view() + " %");
@@ -162,6 +173,8 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                     holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
                 }
             } else if (deal.getType().equals("code-promo")) {
+                holder.dealType.setVisibility(View.VISIBLE);
+                holder.key.setVisibility(View.VISIBLE);
                 holder.dealType.setText(R.string.code_promo);
                 holder.key.setText(deal.getType_view().getInfos_view());
             }

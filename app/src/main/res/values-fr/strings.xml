@@ -22,6 +22,8 @@
     <string name="list">Liste</string>
     <string name="profile">Profil</string>
     <string name="my_profile">Mon Profil</string>
+    <string name="delete_deal_confirmation">Voulez-vous vraiment supprimer ce deal ?</string>
+    <string name="cant_locate">Impossible de vous géolocaliser</string>
     <string name="no_connection_title">Aucune connexion</string>
     <string name="no_connection_message">Verifiez votre connection et réessayez</string>
     <string name="no_deal">Aucun deal n\'a été trouvé.\n\nTrouvez des utilisateurs à suivre en utilisant la fonction Recherche ou faites un tour sur la carte pour voir les deals proches de chez vous !</string>

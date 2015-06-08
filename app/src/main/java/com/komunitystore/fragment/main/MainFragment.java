@@ -1,6 +1,7 @@
 package com.komunitystore.fragment.main;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,11 +10,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.komunitystore.BuildConfig;
 import com.komunitystore.R;
 import com.komunitystore.fragment.KSFragment;
+import com.komunitystore.model.AccessToken;
+import com.komunitystore.model.User;
 import com.komunitystore.utils.KSEvent;
+import com.komunitystore.utils.KSSharedPreferences;
+import com.komunitystore.utils.NetworkManager;
+import com.komunitystore.utils.Singleton;
 import com.komunitystore.view.KSActionBarButton;
+
+import org.json.JSONObject;
 
 import de.greenrobot.event.EventBus;
 
@@ -24,7 +37,11 @@ public class MainFragment extends KSFragment {
 
     private ViewPager _pager;
 
-    private LinearLayout _toLogin, _toRegister;
+    private LinearLayout _toLogin, _toRegister, _splashscreen;
+
+    private ProgressBar _progress;
+
+    private TextView _version;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,6 +91,10 @@ public class MainFragment extends KSFragment {
 
             }
         });
+        _version = (TextView) root.findViewById(R.id.version);
+        int versionCode = BuildConfig.VERSION_CODE;
+        String versionName = BuildConfig.VERSION_NAME;
+        _version.setText("v" + versionName + "." + versionCode);
         _toLogin = (LinearLayout) root.findViewById(R.id.to_login);
         _toLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,10 +109,46 @@ public class MainFragment extends KSFragment {
                 _pager.setCurrentItem(1);
             }
         });
+        _progress = (ProgressBar) root.findViewById(R.id.progress);
+        _splashscreen = (LinearLayout) root.findViewById(R.id.splashscreen);
+        _splashscreen.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (KSSharedPreferences.getInstance(getActivity()).getAccessToken() == null) {
+                    _splashscreen.setVisibility(View.GONE);
+                } else {
+                    _progress.setVisibility(View.VISIBLE);
+                    NetworkManager.getInstance(getActivity()).verify(new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            //KSSharedPreferences.getInstance(getActivity()).setAccessToken(response);
+                            NetworkManager.getInstance(getActivity()).getUserInfo(new Response.Listener<User>() {
+                                @Override
+                                public void onResponse(User response) {
+                                    Singleton.getInstance().setCurrentUser(response);
+                                    EventBus.getDefault().post(new KSEvent(KSEvent.Type.LOGIN, KSEvent.Error.NO_ERROR, null));
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    _splashscreen.setVisibility(View.GONE);
+                                }
+                            });
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            _splashscreen.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }
+        }, 1500);
         return root;
     }
 
-    public void onEventMainThread(KSEvent event){
+    public void onEventMainThread(KSEvent event) {
         switch (event.getType()) {
             case REGISTER:
                 if (event.getError() == KSEvent.Error.NO_ERROR) {
@@ -112,7 +169,6 @@ public class MainFragment extends KSFragment {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
-
 
 
     @Override
