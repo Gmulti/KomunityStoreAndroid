@@ -92,9 +92,8 @@ public class MainFragment extends KSFragment {
             }
         });
         _version = (TextView) root.findViewById(R.id.version);
-        int versionCode = BuildConfig.VERSION_CODE;
         String versionName = BuildConfig.VERSION_NAME;
-        _version.setText("v" + versionName + "." + versionCode);
+        _version.setText("v" + versionName);
         _toLogin = (LinearLayout) root.findViewById(R.id.to_login);
         _toLogin.setOnClickListener(new View.OnClickListener() {
             @Override

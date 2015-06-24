@@ -86,9 +86,18 @@ public class DealAdapter extends ArrayAdapter<Deal> {
             holder.username.setText(deal.getUser().getUsername());
             holder.geoloc.setVisibility(deal.isGeoloc() ? View.VISIBLE : View.GONE);
             if (deal.getType().equals("bon-plan")) {
-                holder.dealType.setVisibility(View.GONE);
                 holder.key.setVisibility(View.GONE);
+                if (deal.getPrice() == -1) {
+                    holder.price.setVisibility(View.GONE);
+                    holder.dealType.setVisibility(View.VISIBLE);
+                    holder.dealType.setText(R.string.bon_plan);
+                } else {
+                    holder.price.setVisibility(View.VISIBLE);
+                    holder.price.setText(deal.getStringPrice());
+                    holder.dealType.setVisibility(View.GONE);
+                }
             } else if (deal.getType().equals("reduction")) {
+                holder.price.setVisibility(View.VISIBLE);
                 holder.dealType.setVisibility(View.VISIBLE);
                 holder.key.setVisibility(View.VISIBLE);
                 holder.dealType.setText(R.string.reduction);
@@ -97,13 +106,15 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                 } else {
                     holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
                 }
+                holder.price.setText(deal.getStringPrice());
             } else if (deal.getType().equals("code-promo")) {
+                holder.price.setVisibility(View.VISIBLE);
                 holder.dealType.setVisibility(View.VISIBLE);
                 holder.key.setVisibility(View.VISIBLE);
                 holder.dealType.setText(R.string.code_promo);
                 holder.key.setText(deal.getType_view().getInfos_view());
+                holder.price.setText(deal.getStringPrice());
             }
-            holder.price.setText(deal.getStringPrice());
             if (deal.getMedias().size() > 0 && deal.getMedias().get(0).getThumbnails_url() != null && !TextUtils.isEmpty(deal.getMedias().get(0).getThumbnails_url().getImage_deal_large())) {
                 holder.dealImage.setVisibility(View.VISIBLE);
                 if (!deal.getMedias().get(0).getThumbnails_url().getImage_deal_large().equals(holder.dealImageUrl)) {
@@ -161,9 +172,18 @@ public class DealAdapter extends ArrayAdapter<Deal> {
             holder.title.setText(span);
             holder.message.setText(deal.getContent());
             if (deal.getType().equals("bon-plan")) {
-                holder.dealType.setVisibility(View.GONE);
                 holder.key.setVisibility(View.GONE);
+                if (deal.getPrice() == -1) {
+                    holder.price.setVisibility(View.GONE);
+                    holder.dealType.setVisibility(View.VISIBLE);
+                    holder.dealType.setText(R.string.bon_plan);
+                } else {
+                    holder.price.setVisibility(View.VISIBLE);
+                    holder.price.setText(deal.getStringPrice());
+                    holder.dealType.setVisibility(View.GONE);
+                }
             } else if (deal.getType().equals("reduction")) {
+                holder.price.setVisibility(View.VISIBLE);
                 holder.dealType.setVisibility(View.VISIBLE);
                 holder.key.setVisibility(View.VISIBLE);
                 holder.dealType.setText(R.string.reduction);
@@ -173,6 +193,7 @@ public class DealAdapter extends ArrayAdapter<Deal> {
                     holder.key.setText(deal.getType_view().getInfos_view() + " " + deal.getCurrency());
                 }
             } else if (deal.getType().equals("code-promo")) {
+                holder.price.setVisibility(View.VISIBLE);
                 holder.dealType.setVisibility(View.VISIBLE);
                 holder.key.setVisibility(View.VISIBLE);
                 holder.dealType.setText(R.string.code_promo);

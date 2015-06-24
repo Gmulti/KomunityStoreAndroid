@@ -24,6 +24,9 @@
     <string name="my_profile">Mon Profil</string>
     <string name="delete_deal_confirmation">Voulez-vous vraiment supprimer ce deal ?</string>
     <string name="cant_locate">Impossible de vous géolocaliser</string>
+    <string name="address">Adresse</string>
+    <string name="my_position">Ma position</string>
+    <string name="find_an_address">Trouver une adresse</string>
     <string name="no_connection_title">Aucune connexion</string>
     <string name="no_connection_message">Verifiez votre connection et réessayez</string>
     <string name="no_deal">Aucun deal n\'a été trouvé.\n\nTrouvez des utilisateurs à suivre en utilisant la fonction Recherche ou faites un tour sur la carte pour voir les deals proches de chez vous !</string>
@@ -65,4 +68,5 @@
     <string name="reduction">Réduction</string>
     <string name="map_no_gps_title">GPS désactivé</string>
     <string name="map_no_gps_message">Voulez-vous activer le GPS pour plus de précision ?</string>
+    <string name="logout">Se déconnecter ?</string>
 </resources>

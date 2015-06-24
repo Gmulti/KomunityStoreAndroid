@@ -51,7 +51,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 /**
  * Created by G3ck0z9 on 29/05/2015.
  */
-public class DealMapFragment extends KSFragment implements LocationListener {
+public class DealsMapFragment extends KSFragment implements LocationListener {
 
     private View _rootView;
 

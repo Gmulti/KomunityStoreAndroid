@@ -46,6 +46,16 @@ public class KSSharedPreferences {
         editor.apply();
     }
 
+    public void logout() {
+        SharedPreferences.Editor editor = _prefs.edit();
+        editor.putString(KS_ACCESS_TOKEN, "");
+        editor.putString(KS_TOKEN_TYPE, "");
+        editor.putLong(KS_EXPIRES_IN, -1);
+        editor.putString(KS_REFRESH_TOKEN, "");
+        editor.putString(KS_SCOPE, "");
+        editor.apply();
+    }
+
     public AccessToken getAccessToken() {
         AccessToken at = new AccessToken();
         String accessToken = _prefs.getString(KS_ACCESS_TOKEN, "");

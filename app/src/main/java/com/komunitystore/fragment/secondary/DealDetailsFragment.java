@@ -1,6 +1,7 @@
 package com.komunitystore.fragment.secondary;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -96,6 +97,15 @@ public class DealDetailsFragment extends KSFragment {
         }
         if (_deal.isGeoloc()) {
             _go.setVisibility(View.VISIBLE);
+            _go.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), SecondaryActivity.class);
+                    intent.putExtra(SecondaryActivity.EXTRA_FRAGMENT, DealMapFragment.class.getName());
+                    intent.putExtra(SecondaryActivity.EXTRA_DEAL, _deal);
+                    getActivity().startActivity(intent);
+                }
+            });
         } else {
             _go.setVisibility(View.GONE);
         }

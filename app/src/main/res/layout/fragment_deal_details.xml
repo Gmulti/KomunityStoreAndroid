@@ -100,6 +100,7 @@
             android:layout_margin="16dp"
             android:src="@drawable/pin_white"
             android:visibility="gone"
+            tools:visibility="visible"
             app:fab_colorNormal="@color/blue"
             app:fab_colorPressed="@color/dark_blue"
             app:fab_colorRipple="@color/blue" />

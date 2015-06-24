@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -74,11 +75,12 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
     private EditText _name, _content, _price, _promoCode, _reduc;
     private TextView _address;
     private KSCheckBox _typePromo, _typeReduction, _typeBonPlan;
+    private CheckBox _enablePrice;
     private RadioButton _currencyEuros, _currencyDollar, _reducEuros, _reducDollar, _reducPercent;
     private ImageView _dealPhoto;
     private Button _post;
     private ImageButton _takePhoto, _findAddress;
-    private LinearLayout _typeBonPlanLayout, _typePromoLayout, _typeReductionLayout;
+    private LinearLayout _typeBonPlanLayout, _typePromoLayout, _typeReductionLayout, _bonPLanPriceLayout;
 
     private Bitmap _dealImage;
     private LatLng _dealPosition;
@@ -111,6 +113,9 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
         _typeBonPlan.setColors(R.color.red, R.color.dark_grey);
         _typeBonPlan.setTextColor(android.R.color.black);
         _typeBonPlan.setOnSelectedChangeListener(this);
+        _enablePrice = (CheckBox) root.findViewById(R.id.enable_price);
+        _enablePrice.setOnCheckedChangeListener(this);
+        _bonPLanPriceLayout = (LinearLayout) root.findViewById(R.id.bon_plan_price_layout);
         _currencyEuros = (RadioButton) root.findViewById(R.id.deal_currency_euros);
         _currencyEuros.setOnCheckedChangeListener(this);
         _currencyDollar = (RadioButton) root.findViewById(R.id.deal_currency_dollars);
@@ -175,12 +180,16 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
                 }
             } else if (_typeBonPlan.isSelected()) {
                 type = "bon-plan";
-                if (TextUtils.isEmpty(_price.getText())) {
-                    showFillInfoDialog();
-                    return;
+                if (_enablePrice.isChecked()) {
+                    if (TextUtils.isEmpty(_price.getText())) {
+                        showFillInfoDialog();
+                        return;
+                    } else {
+                        params.put("price", _price.getText().toString());
+                        params.put("currency", _currencyEuros.isChecked() ? "euro" : "dollar");
+                    }
                 } else {
-                    params.put("price", _price.getText().toString());
-                    params.put("currency", _currencyEuros.isChecked() ? "euro" : "dollar");
+                    params.put("price", "-1");
                 }
             }
             params.put("type", type);
@@ -206,6 +215,7 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
+                                        getActivity().finish();
                                     }
                                 })
                                 .create().show();
@@ -229,7 +239,8 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
 
     private void findAddress() {
         new AlertDialog.Builder(getActivity())
-                .setPositiveButton("Here", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.address)
+                .setPositiveButton(R.string.my_position, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -262,7 +273,7 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
                         }
                     }
                 })
-                .setNegativeButton("Search an address", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.find_an_address, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         FindAddressDialog findAddressDialog = new FindAddressDialog(getActivity());
@@ -349,6 +360,42 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
     }
 
     @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (buttonView.equals(_enablePrice)) {
+            _bonPLanPriceLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    @Override
+    public void onSelectedChanged(KSCheckBox checkBox, boolean selected) {
+        if (selected && checkBox.isSelected() != selected) {
+            if (checkBox.equals(_typeBonPlan)) {
+                _typeBonPlan.setSelected(selected);
+                _typeBonPlanLayout.setVisibility(View.VISIBLE);
+                _typeReductionLayout.setVisibility(View.GONE);
+                _typePromoLayout.setVisibility(View.GONE);
+                _typePromo.setSelected(false);
+                _typeReduction.setSelected(false);
+            } else if (checkBox.equals(_typePromo)) {
+                _typePromo.setSelected(selected);
+                _typeBonPlanLayout.setVisibility(View.GONE);
+                _typeReductionLayout.setVisibility(View.GONE);
+                _typePromoLayout.setVisibility(View.VISIBLE);
+                _typeBonPlan.setSelected(false);
+                _typeReduction.setSelected(false);
+            } else if (checkBox.equals(_typeReduction)) {
+                _typeReduction.setSelected(selected);
+                _typeBonPlanLayout.setVisibility(View.GONE);
+                _typeReductionLayout.setVisibility(View.VISIBLE);
+                _typePromoLayout.setVisibility(View.GONE);
+                _typeBonPlan.setSelected(false);
+                _typePromo.setSelected(false);
+
+            }
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
@@ -410,38 +457,4 @@ public class PostDealFragment extends KSFragment implements CompoundButton.OnChe
         return false;
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked) {
-        }
-    }
-
-    @Override
-    public void onSelectedChanged(KSCheckBox checkBox, boolean selected) {
-        if (selected && checkBox.isSelected() != selected) {
-            if (checkBox.equals(_typeBonPlan)) {
-                _typeBonPlan.setSelected(selected);
-                _typeBonPlanLayout.setVisibility(View.VISIBLE);
-                _typeReductionLayout.setVisibility(View.GONE);
-                _typePromoLayout.setVisibility(View.GONE);
-                _typePromo.setSelected(false);
-                _typeReduction.setSelected(false);
-            } else if (checkBox.equals(_typePromo)) {
-                _typePromo.setSelected(selected);
-                _typeBonPlanLayout.setVisibility(View.GONE);
-                _typeReductionLayout.setVisibility(View.GONE);
-                _typePromoLayout.setVisibility(View.VISIBLE);
-                _typeBonPlan.setSelected(false);
-                _typeReduction.setSelected(false);
-            } else if (checkBox.equals(_typeReduction)) {
-                _typeReduction.setSelected(selected);
-                _typeBonPlanLayout.setVisibility(View.GONE);
-                _typeReductionLayout.setVisibility(View.VISIBLE);
-                _typePromoLayout.setVisibility(View.GONE);
-                _typeBonPlan.setSelected(false);
-                _typePromo.setSelected(false);
-
-            }
-        }
-    }
 }
